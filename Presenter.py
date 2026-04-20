@@ -5,14 +5,14 @@ class Presenter:
         self.modelo = model
 
         # Suscripción a las señales de la vista
-        self.vista.actLista.add_listener(self.fact_lista)
+        self.vista.actLista.add_listener(self.f_act_lista)
 
-    def fact_lista(self):
+
+    def f_act_lista(self):
         try:
             text_in = self.vista.entrada()
-            self.modelo.nombre = text_in
-            lista_out = self.modelo.buscar_ciudades()
-            self.vista.salida(lista_out)
+            lista_ciudades = self.modelo.buscar_ciudades(text_in)
+            self.vista.salida(lista_ciudades)
         except Exception as e:
             self.vista.mensaje('Error', str(e))
-            
+    
