@@ -1,23 +1,34 @@
 from .ciudad import Ciudad
-from .openmeteo import OpenMeteo
+from .solicitudopenmeteo import SolicitudOpenMeteo
+from .parametro import Parametro
 
 class ModelFacade:
     """ 
     Patrón de diseño Facade (Fachada) para Model: 
     Agrupar todos los metodos de las clases lógicas en una sola clase.
     """
-    def __init__(self, nombre_init=None):
-        self.ciudad = Ciudad(nombre_init)
-        self.var_meteo = OpenMeteo(self.ciudad)
+    def __init__(self, nombre=None):
+        self.ciudad = Ciudad(nombre)
+        self.solicitud = SolicitudOpenMeteo(self.ciudad)
     
     # Métodos de la clase Ciudad ########################
-    def buscar_ciudades(self, text):
+    def facade_buscar_ciudades(self, text):
         self.ciudad.nombre = text
         return self.ciudad.buscar_ciudades()
     
-    def obtener_coordenadas(self, ciudad_select):
+    def facade_obtener_coordenadas(self, ciudad_select):
         return self.ciudad.obtener_coordenadas(ciudad_select)
     
+
     # Métodos de la clase OpenMeteo #####################
-    def obtener_var(self, ciudad_select):
-        return self.var_meteo.obtener_var(ciudad_select)
+    def facade_obtener_var(self, ciudad_select):
+        return self.solicitud.obtener_var(ciudad_select)
+    
+    
+    # Métodos de la clase Parametro #####################
+    def facade_actualizar_param(self, ciudad_select):
+        self.parametros = Parametro(self.ciudad, ciudad_select)
+        return self.pa
+
+        
+        

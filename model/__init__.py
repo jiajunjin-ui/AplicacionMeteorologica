@@ -1,6 +1,8 @@
 """
 Paquete lógico:
-Paquete que agrupa toda la lógica los Model's
+Paquete que agrupa toda la lógica de los Model's 
+que se quiere que se muestre fuera de la carpeta 
+model.
 
 - ModelFacade
 Métodos de Ciudad ---agrupar---> ModelFacade

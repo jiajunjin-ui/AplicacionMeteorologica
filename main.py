@@ -1,23 +1,23 @@
 import tkinter as tk
 from model import ModelFacade
-from ventana2 import Ventana2
-from presenter import Presenter
+from view_ventana2 import ViewVentana2
+from presenter_ventana2 import PresenterVentana2
 
 class main():
     # 1. Crear la ventana raíz de Tkinter
-    ventana2 = tk.Tk()
+    ventana = tk.Tk()
     
     # 2. Instanciar los Modelos
     modelo = ModelFacade(None)
 
     # 3. Instanciar Vista de Tkinter
-    vista = Ventana2(ventana2)
+    vista = ViewVentana2(ventana)
 
     # 4. Instanciar el Presenter 
-    presenter = Presenter(vista, modelo)
+    presenter = PresenterVentana2(vista, modelo)
 
     # 5. Iniciar bucle de eventos 
-    ventana2.mainloop()
+    ventana.mainloop()
     
 if __name__ == "__main__":
     main()
