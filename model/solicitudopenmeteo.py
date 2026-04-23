@@ -25,7 +25,9 @@ class SolicitudOpenMeteo:
         self.url_base = "https://api.open-meteo.com/v1/forecast"
     
     def obtener_var(self, ciudad_select):
-        """Método que devuelve un DataFrame de las variables meteorológica
+        """Método accede a la API de OpenMeteo para obtener las 
+        variables meteorológica y devolverlas en formato DataFrame 
+
         Parameter
         ----------
         - ciudad_select : str
@@ -72,8 +74,3 @@ class SolicitudOpenMeteo:
         porhora_dataframe = pd.DataFrame(data = porhora_data)
         return porhora_dataframe
 
-# if __name__ == "__main__" :
-#     ciudad1 = Ciudad("Barce")
-#     ciudad1.buscar_ciudades()
-#     solicitud = SolicitudOpenMeteo(ciudad1)
-#     print(solicitud.obtener_var("Barcelona"))  

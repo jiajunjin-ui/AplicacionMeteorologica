@@ -3,8 +3,7 @@ from .solicitudopenmeteo import SolicitudOpenMeteo
 from .parametro import Parametro
 
 class ModelFacade:
-    """ 
-    Patrón de diseño Facade (Fachada) para Model: 
+    """ Patrón de diseño Facade (Fachada) para Model: 
     Agrupar todos los metodos de las clases lógicas en una sola clase.
     """
     def __init__(self, nombre=None):
@@ -19,7 +18,7 @@ class ModelFacade:
     def facade_obtener_coordenadas(self, ciudad_select):
         return self.ciudad.obtener_coordenadas(ciudad_select)
     
-
+    
     # Métodos de la clase OpenMeteo #####################
     def facade_obtener_var(self, ciudad_select):
         return self.solicitud.obtener_var(ciudad_select)

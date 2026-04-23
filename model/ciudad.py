@@ -41,8 +41,9 @@ class Ciudad:
 
            
     def buscar_ciudades(self):
-        """Función que se conecta a OpenMeteo para buscar nombres de ciudades que presenten cierta coincidencia con el str introducido."""
-        
+        """Método se conecta al servicio de geocoding de OpenMeteo para buscar nombres de ciudades 
+        que presenten cierta coincidencia con el str introducido.
+        """
         if len(self.nombre) < 3:
              raise ValueError('Se debe introducir más de 3 letras')
          
