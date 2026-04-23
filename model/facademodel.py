@@ -28,7 +28,7 @@ class ModelFacade:
     # Métodos de la clase Parametro #####################
     def facade_actualizar_param(self, ciudad_select):
         self.parametros = Parametro(self.ciudad, ciudad_select)
-        return self.pa
+        return self.parametros.actualizar_param()
 
         
         

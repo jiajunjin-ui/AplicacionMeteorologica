@@ -28,7 +28,8 @@ class ViewVentana2:
       # Elementos #########################################
         self.label_busca = ttk.Label(self.ventana2, text="Ciudad:")
         self.entry_busca = ttk.Entry(self.ventana2, width=40)
-        self.btn_busca = ttk.Button(self.ventana2, text="Buscar", command=lambda: self.actualizar_lista())
+        self.btn_busca = ttk.Button(self.ventana2, text="Buscar", command=lambda: self.actualizar_lista_btn())
+        self.label_resultado = ttk.Label(self.ventana2)
 
       # Organización #####################################
         self.ventana2.columnconfigure(0, weight=1)
@@ -38,8 +39,8 @@ class ViewVentana2:
         self.label_busca.grid(row=0, column=0, sticky="e")
         self.entry_busca.grid(row=0, column=1, sticky="w")
         self.btn_busca.grid(row=0, column=2)
+        self.label_resultado.grid(row=1, column=0)
     
-
 
     def entrada(self):
         """Toma el texto de Entry"""
@@ -64,13 +65,18 @@ class ViewVentana2:
         self.lista_btn.clear()
 
     def actualizar_lista_btn(self):
+        self.limpiar_result()
         self.btnBuscar.emit()
 
     def seleccionar_ciudad(self, nombre_ciudad):
         self.btnSelect.emit(nombre_ciudad)
+        self.limpiar_lista_btn()
 
-    def consultar_var(self):
-        pass
+    def limpiar_result(self):
+        self.label_resultado.config(text="")
+
+    def resultados(self, resultado):
+        self.label_resultado.config(text=resultado)
 
     def mensaje(self, prompt, txt):
         """Muestra error con messagebox"""

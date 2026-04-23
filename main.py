@@ -1,9 +1,9 @@
 import tkinter as tk
-from model import ModelFacade
-from view_ventana2 import ViewVentana2
-from presenter_ventana2 import PresenterVentana2
 
 class main():
+    from model import ModelFacade
+    from view_ventana2 import ViewVentana2
+    from presenter_ventana2 import PresenterVentana2
     # 1. Crear la ventana raíz de Tkinter
     ventana = tk.Tk()
     

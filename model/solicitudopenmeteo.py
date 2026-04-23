@@ -3,7 +3,7 @@ import openmeteo_requests
 import pandas as pd
 import requests_cache
 from retry_requests import retry
-from ciudad import Ciudad
+from .ciudad import Ciudad
 
 
 class SolicitudOpenMeteo:
@@ -72,8 +72,8 @@ class SolicitudOpenMeteo:
         porhora_dataframe = pd.DataFrame(data = porhora_data)
         return porhora_dataframe
 
-if __name__ == "__main__" :
-    ciudad1 = Ciudad("Barce")
-    ciudad1.buscar_ciudades()
-    solicitud = SolicitudOpenMeteo(ciudad1)
-    print(solicitud.obtener_var("Barcelona"))  
+# if __name__ == "__main__" :
+#     ciudad1 = Ciudad("Barce")
+#     ciudad1.buscar_ciudades()
+#     solicitud = SolicitudOpenMeteo(ciudad1)
+#     print(solicitud.obtener_var("Barcelona"))  
