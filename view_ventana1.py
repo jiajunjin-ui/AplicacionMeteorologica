@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkintermapview import TkinterMapView
-from Event import Event
+from model import Event
 
 class TkView:
     def __init__(self, ventana):
@@ -83,8 +83,8 @@ class TkView:
             self.btn_ranking.emit()
 
 if __name__ == '__main__':
-    from Presenter import Presenter
-    from Mapa import Mapa as Model
+    from presenter_ventana1 import Presenter
+    from model.Mapa import Mapa as Model
 
     ventana = tk.Tk()
     modelo = Model()

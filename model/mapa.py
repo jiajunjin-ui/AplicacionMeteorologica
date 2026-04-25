@@ -1,4 +1,4 @@
-from SolicitudOpenMeteo import SolicitudOpenMeteo
+from .solicitudopenmeteo import SolicitudOpenMeteo
 
 
 class Mapa:
