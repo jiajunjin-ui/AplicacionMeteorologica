@@ -45,7 +45,7 @@ class SolicitudOpenMeteo:
                 "weather_code"
                 ],
             "past_days": 0,
-            "forecast_days": 5
+            "forecast_days": 3
         }
         responses = self.openmeteo.weather_api(self.url_base, params=params)
         response = responses[0]
@@ -63,7 +63,7 @@ class SolicitudOpenMeteo:
             start = pd.to_datetime(porhora.Time(), unit="s", utc=True),
             end = pd.to_datetime(porhora.TimeEnd(), unit="s", utc=True),
             freq = pd.Timedelta(seconds=porhora.Interval()),
-            inclusive = "left"
+            inclusive = 'left'
         )}
         porhora_data["temp_2m"] = temp_2m_h
         porhora_data["hum_rel"] = hum_rel_h

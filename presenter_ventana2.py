@@ -6,7 +6,7 @@ class PresenterVentana2:
 
         # Suscripción a las señales de la vista
         self.vista.btnBuscar.add_listener(self.f_actualizar_lista)
-        self.vista.btnSelect.add_listener(self.f_mostrar_grafico)
+        self.vista.btnSelect.add_listener(self.f_actualizar_grafico)
 
 
     def f_actualizar_lista(self):
@@ -17,11 +17,11 @@ class PresenterVentana2:
         except Exception as e:
             self.vista.mensaje('Error', str(e))
     
-    def f_mostrar_grafico(self, nombre_ciudad):
+    def f_actualizar_grafico(self, nombre_ciudad):
         try:
             ciudad_select = nombre_ciudad
             dataframe = self.modelo.facade_actualizar_param(ciudad_select)
-            self.vista.resultados(dataframe)
+            self.vista.crear_grafico(dataframe)
         except Exception as e:
             self.vista.mensaje('Error', str(e))
 

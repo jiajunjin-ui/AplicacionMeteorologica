@@ -7,7 +7,7 @@ class Ciudad:
     ----------
     - nombre : str
         Caneda de texto que corresponde a una ciudad; puede ser el nombre entero o una parte de esta. 
-        Nota: debe de contener al menos 3 leras.
+        Nota: debe de contener al menos 3 letras.
     """
     _caracteres_invalidos = '#%/<>"(){[&:;|+=*@#~$€£0123456789}]'
 
