@@ -11,4 +11,4 @@ class Event:
     def emit(self, *args, **kwargs):
         """Llama a todas las funciones suscritas, una por una."""
         for funcion in self.suscriptores:
-            funcion(*args, **kwargs)
+            funcion(*args, **kwargs) #

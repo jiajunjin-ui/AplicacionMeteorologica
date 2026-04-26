@@ -60,4 +60,4 @@ class Ciudad:
             raise KeyError("Seleccione una ciudad de la lista generada.")
         self.latitud, self.longitud = self._datos_ciudades[ciudad_select]
         self.nombre = ciudad_select
-        return self.latitud, self.longitud
+        return self.latitud, self.longitud #

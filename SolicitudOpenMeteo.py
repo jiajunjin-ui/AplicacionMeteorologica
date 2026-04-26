@@ -173,4 +173,4 @@ class SolicitudOpenMeteo:
             }
         )
 
-        return dataframe
+        return dataframe #

@@ -4,4 +4,4 @@ class Parametro:
         self.humedad = humedad
         self.viento = viento
         self.prob_precip = prob_precip
-        self.weather_code = weather_code
+        self.weather_code = weather_code #
