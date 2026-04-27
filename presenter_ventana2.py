@@ -20,7 +20,7 @@ class PresenterVentana2:
     def f_actualizar_grafico(self, nombre_ciudad):
         try:
             ciudad_select = nombre_ciudad
-            dataframe = self.modelo.facade_actualizar_param(ciudad_select)
+            dataframe = self.modelo.facade_actualizar_param_prediccion(ciudad_select)
             self.vista.crear_grafico(dataframe)
         except Exception as e:
             self.vista.mensaje('Error', str(e))

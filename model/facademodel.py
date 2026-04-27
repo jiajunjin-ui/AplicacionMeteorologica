@@ -9,6 +9,7 @@ class ModelFacade:
     def __init__(self, nombre=None):
         self.ciudad = Ciudad(nombre)
         self.solicitud = SolicitudOpenMeteo(self.ciudad)
+        self.parametros = Parametro(self.ciudad, nombre_ciudad=None)
     
     # Métodos de la clase Ciudad ########################
     def facade_buscar_ciudades(self, text):
@@ -24,10 +25,12 @@ class ModelFacade:
         return self.solicitud.obtener_var(ciudad_select)
     
     
-    # Métodos de la clase Parametro #####################
-    def facade_actualizar_param(self, ciudad_select):
-        self.parametros = Parametro(self.ciudad, ciudad_select)
-        return self.parametros.actualizar_param()
+    # Métodos y atributos de la clase Parametro #####################
+    def facade_actualizar_param_prediccion(self, ciudad_select):
+        self.parametros.nombre_ciudad = ciudad_select
+        return self.parametros.actualizar_param_prediccion()
+    
+    def facade_actualizar_param_ahora(self, ciudad_select):
+        self.parametros.nombre_ciudad = ciudad_select
+        return self.parametros.actualizar_param_ahora()
 
-        
-        

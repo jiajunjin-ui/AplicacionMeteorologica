@@ -25,9 +25,10 @@ class SolicitudOpenMeteo:
         self.url_base = "https://api.open-meteo.com/v1/forecast"
     
     def obtener_var(self, ciudad_select):
-        """Método accede a la API de OpenMeteo para obtener las 
-        variables meteorológica y devolverlas en formato DataFrame 
-
+        """Método accede a la API de OpenMeteo para obtener:
+        - Las predicciónes meteorológicas y devolverlas en formato DataFrame
+        - Los datos meteorológicos actuales y devolverlas en formato dic
+        
         Parameter
         ----------
         - ciudad_select : str
@@ -44,11 +45,36 @@ class SolicitudOpenMeteo:
                 "wind_speed_10m", 
                 "weather_code"
                 ],
+            "current": [
+                "temperature_2m",
+                "relative_humidity_2m", 
+                "precipitation_probability", 
+                "wind_speed_10m", 
+                "weather_code"
+                ],
+            "timezone": "Europe/Berlin",
             "past_days": 0,
             "forecast_days": 3
         }
         responses = self.openmeteo.weather_api(self.url_base, params=params)
         response = responses[0]
+
+        actual=response.Current()
+
+        temp_2m_actual = actual.Variables(0).Value()
+        hum_rel_actual = actual.Variables(1).Value()
+        prob_precip_actual = actual.Variables(2).Value()
+        wind_speed_10m_actual = actual.Variables(3).Value()
+        weather_code_actual = actual.Variables(4).Value()
+
+        actual_data = {"time":actual.Time()}
+        actual_data["temp_2m"] = temp_2m_actual
+        actual_data["hum_rel"] = hum_rel_actual
+        actual_data["prob_precip"] = prob_precip_actual
+        actual_data["wind_speed"] = wind_speed_10m_actual
+        actual_data["weather_code"] = weather_code_actual
+
+
 
         porhora = response.Hourly()
 
@@ -72,5 +98,6 @@ class SolicitudOpenMeteo:
         porhora_data["weather_code"] = weather_code_h
         
         porhora_dataframe = pd.DataFrame(data = porhora_data)
-        return porhora_dataframe
+
+        return porhora_dataframe, actual_data
 
