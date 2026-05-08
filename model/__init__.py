@@ -4,9 +4,10 @@ Paquete que agrupa toda la lógica de los Model's
 que se quiere que se muestre fuera de la carpeta 
 model.
 
-- ModelFacade
-Métodos de Ciudad ---agrupar---> ModelFacade
-Métodos de OpenMeteo ---agruopar---> ModelFacade
+Model's:
+- AppMeteo
+Métodos de Localidad ---agrupar en ---> AppMeteo
+Métodos de SolicitudOpenMeteo ---agrupar en---> AppMeteo
 
 - Event
 

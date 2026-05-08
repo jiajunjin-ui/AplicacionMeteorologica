@@ -96,11 +96,12 @@ class ViewGrafico:
         self.btnSelect.emit(nombre_ciudad)
         self.limpiar_lista_btn()
     
-    def crear_grafico(self, date, temp, hum_rel, viento, prob_precip, estado_cielo, nombre_vars):
+    def crear_grafico(self, date, temp, hum_rel, viento, prob_precip, estado_cielo):
         """Método que crear los widgets (CheckButtons) y el canvas del 
         gráfico"""
       # Guardar datos  
         self.date = date
+        nombre_vars = ["Temperatura", "Humedad Rel.", "Viento", "Prob. Precipitación", "Estado cielo"]
         self.datos_variables = {
             "Temperatura": temp,
             "Humedad Rel.": hum_rel,

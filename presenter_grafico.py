@@ -31,9 +31,8 @@ class PresenterGrafico:
             viento = datos_porhora.viento
             prob_precip = datos_porhora.prob_precip
             estado_cielo = datos_porhora.weather_code
-            nombres_vars = ["Temperatura", "Humedad Rel.", "Viento", "Prob. Precipitación", "Estado cielo"]
 
-            self.vista.crear_grafico(date, temp, hum_rel, viento, prob_precip, estado_cielo, nombres_vars)
+            self.vista.crear_grafico(date, temp, hum_rel, viento, prob_precip, estado_cielo)
         except Exception as e:
             self.vista.mensaje('Error', str(e))
 
