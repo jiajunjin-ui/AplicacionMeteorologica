@@ -11,7 +11,7 @@ Métodos de OpenMeteo ---agruopar---> ModelFacade
 - Event
 
 """
-from .facademodel import ModelFacade
+from .app_meteo import AppMeteo
 from .event import Event
 
-__all__ = ['ModelFacade', 'Event']
+__all__ = ['AppMeteo', 'Event']
