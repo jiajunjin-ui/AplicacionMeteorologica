@@ -1,10 +1,9 @@
 import tkinter as tk
 import tkinter.messagebox
-
 from tkintermapview import TkinterMapView
-
 from model import Event
-
+import os
+from PIL import Image, ImageTk
 
 class ViewMapa:
     def __init__(self, ventana):
@@ -19,6 +18,14 @@ class ViewMapa:
         self.temperatura_actual = None
         self.humedad_actual = None
         self.viento_actual = None
+        self.tipo_icono_actual = None
+
+        self.icono_sol = self.cargar_icono("sol.png")
+        self.icono_nube = self.cargar_icono("nube.png")
+        self.icono_lluvia = self.cargar_icono("lluvia.png")
+        self.icono_tormenta = self.cargar_icono("tormenta.png")
+        self.icono_nieve = self.cargar_icono("nieve.png")
+        self.icono_niebla = self.cargar_icono("niebla.png")
 
         self.btn_buscar = Event()
         self.btn_select = Event()
@@ -84,13 +91,14 @@ class ViewMapa:
         """
         self.click_mapa.emit(coordenadas)
 
-    def mostrar_ciudad_en_mapa(self, nombre, lat, lon, temperatura, humedad, viento):
+    def mostrar_ciudad_en_mapa(self, nombre, lat, lon, temperatura, humedad, viento, tipo_icono):
         self.nombre_actual = nombre
         self.lat_actual = lat
         self.lon_actual = lon
         self.temperatura_actual = temperatura
         self.humedad_actual = humedad
         self.viento_actual = viento
+        self.tipo_icono_actual = tipo_icono
 
         if self.marcador_actual is not None:
             self.marcador_actual.delete()
@@ -99,12 +107,38 @@ class ViewMapa:
         self.mapa.set_zoom(7)
 
         texto = self.construir_texto_marcador()
+        icono = self.elegir_icono(tipo_icono)
 
         self.marcador_actual = self.mapa.set_marker(
             lat,
             lon,
-            text=texto
+            text=texto,
+            icon=icono,
+            icon_anchor="center"
         )
+
+    def cargar_icono(self, nombre_archivo):
+        carpeta_actual = os.path.dirname(__file__)
+        ruta_icono = os.path.join(carpeta_actual, "iconos", nombre_archivo)
+
+        imagen = Image.open(ruta_icono)
+        imagen = imagen.resize((70, 70))
+
+        return ImageTk.PhotoImage(imagen)
+
+    def elegir_icono(self, tipo_icono):
+        if tipo_icono == "sol":
+            return self.icono_sol
+        if tipo_icono == "nube":
+            return self.icono_nube
+        if tipo_icono == "lluvia":
+            return self.icono_lluvia
+        if tipo_icono == "tormenta":
+            return self.icono_tormenta
+        if tipo_icono == "nieve":
+            return self.icono_nieve
+        if tipo_icono == "niebla":
+            return self.icono_niebla
 
     def construir_texto_marcador(self):
         if self.nombre_actual is None:
@@ -134,7 +168,8 @@ class ViewMapa:
                 self.lon_actual,
                 self.temperatura_actual,
                 self.humedad_actual,
-                self.viento_actual
+                self.viento_actual,
+                self.tipo_icono_actual
             )
 
     def opera(self, op):
