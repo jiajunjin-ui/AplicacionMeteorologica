@@ -81,7 +81,8 @@ class SolicitudOpenMeteo:
                 "relative_humidity_2m", 
                 "precipitation_probability", 
                 "wind_speed_10m", 
-                "weather_code"
+                "weather_code",
+                "is_day"
                 ],
             "timezone": "auto",
             }
@@ -96,6 +97,7 @@ class SolicitudOpenMeteo:
         prob_precip_actual = actual.Variables(2).Value()
         wind_speed_10m_actual = actual.Variables(3).Value()
         weather_code_actual = actual.Variables(4).Value()
+        is_day_actual = actual.Variables(5).Value()
         date_actual = pd.to_datetime(actual.Time(), unit="s", utc=True)
         return Parametro(
             temperatura=temp_2m_actual,
@@ -103,7 +105,8 @@ class SolicitudOpenMeteo:
             viento=wind_speed_10m_actual,
             prob_precip=prob_precip_actual,
             weather_code=weather_code_actual,
-            date=date_actual
+            date=date_actual,
+            is_day=is_day_actual
             )
 if __name__ == '__main__':
     localidad = Localidad(nombre="Barcelona", lat=41.3888, lon=2.159 )

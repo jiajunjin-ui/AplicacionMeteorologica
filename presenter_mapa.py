@@ -8,7 +8,6 @@ class PresenterMapa:
         self.vista.btn_buscar.add_listener(self.f_buscar_nombre)
         self.vista.btn_select.add_listener(self.f_buscar_por_nombre)
         self.vista.click_mapa.add_listener(self.f_buscar_por_click)
-        
 
     def f_buscar_nombre(self):
         nombre_ciudad = self.vista.obtener_ciudad_buscada()
@@ -35,8 +34,9 @@ class PresenterMapa:
             humedad = ciudad.parametros.humedad
             viento = ciudad.parametros.viento
             weather_code = ciudad.parametros.weather_code
+            is_day = ciudad.parametros.is_day
 
-            tipo_icono = self.obtener_tipo_icono(weather_code)
+            tipo_icono = self.obtener_tipo_icono(weather_code, is_day)
 
             self.vista.mostrar_ciudad_en_mapa(
                 nombre,
@@ -67,8 +67,9 @@ class PresenterMapa:
             humedad = ciudad.parametros.humedad
             viento = ciudad.parametros.viento
             weather_code = ciudad.parametros.weather_code
+            is_day = ciudad.parametros.is_day
 
-            tipo_icono = self.obtener_tipo_icono(weather_code)
+            tipo_icono = self.obtener_tipo_icono(weather_code, is_day)
 
             self.vista.mostrar_ciudad_en_mapa(
                 nombre,
@@ -83,9 +84,12 @@ class PresenterMapa:
         except Exception as e:
             self.vista.mostrar_error(str(e))
 
-    def obtener_tipo_icono(self, weather_code):
+    def obtener_tipo_icono(self, weather_code, is_day):
         if weather_code == 0:
-            return "sol"
+            if is_day == 1:
+                return "sol"
+            else:
+                return "luna"
         if weather_code in [1, 2, 3]:
             return "nube"
         if weather_code in [45, 48]:

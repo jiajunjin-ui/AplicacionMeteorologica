@@ -26,6 +26,7 @@ class ViewMapa:
         self.icono_tormenta = self.cargar_icono("tormenta.png")
         self.icono_nieve = self.cargar_icono("nieve.png")
         self.icono_niebla = self.cargar_icono("niebla.png")
+        self.icono_luna = self.cargar_icono("luna.png")
 
         self.btn_buscar = Event()
         self.btn_select = Event()
@@ -129,6 +130,8 @@ class ViewMapa:
     def elegir_icono(self, tipo_icono):
         if tipo_icono == "sol":
             return self.icono_sol
+        if tipo_icono == "luna":
+            return self.icono_luna
         if tipo_icono == "nube":
             return self.icono_nube
         if tipo_icono == "lluvia":
@@ -150,7 +153,7 @@ class ViewMapa:
             detalles.append(f"{self.temperatura_actual:.2f} °C")
 
         if self.mostrar_humedad.get() and self.humedad_actual is not None:
-            detalles.append(f"{self.humedad_actual}%")
+            detalles.append(f"{self.humedad_actual:.2f}%")
 
         if self.mostrar_viento.get() and self.viento_actual is not None:
             detalles.append(f"{self.viento_actual:.2f} km/h")
