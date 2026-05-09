@@ -1,0 +1,8 @@
+class Parametro:
+    def __init__(self, temperatura=None, humedad=None, viento=None, prob_precip=None, weather_code=None, date=None):
+        self.temperatura = temperatura
+        self.humedad = humedad
+        self.viento = viento
+        self.prob_precip = prob_precip
+        self.weather_code = weather_code
+        self.date = date
