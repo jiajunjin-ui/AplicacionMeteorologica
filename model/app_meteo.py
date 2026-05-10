@@ -1,9 +1,11 @@
 from .sistema_localizacion import SistemaLocalizacion
+from .sistema_pais import SistemaPais
 from .solicitud_openmeteo import SolicitudOpenMeteo
 
 class AppMeteo:
     def __init__(self):
         self.buscador = SistemaLocalizacion()
+        self.buscador_paises = SistemaPais()
         self.servicio_clima = None
     
     def buscar_nombre_ciudad(self, text):
@@ -30,4 +32,17 @@ class AppMeteo:
         parametros = self.servicio_clima.obtener_clima_actual()
         localidad.parametros = parametros
         return localidad
+
+    def buscar_nombre_pais(self, texto):
+        return self.buscador_paises.buscador_nombre_pais(texto)
+
+    def consultar_clima_actual_pais(self, nombre_pais, cantidad=3):
+        pais = self.buscador_paises.buscar_ciudades_principales(nombre_pais, cantidad)
+
+        for localidad in pais.localidades:
+            self.servicio_clima = SolicitudOpenMeteo(localidad)
+            parametros = self.servicio_clima.obtener_clima_actual()
+            localidad.parametros = parametros
+
+        return pais
     

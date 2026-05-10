@@ -108,6 +108,7 @@ class SolicitudOpenMeteo:
             date=date_actual,
             is_day=is_day_actual
             )
+
 if __name__ == '__main__':
     localidad = Localidad(nombre="Barcelona", lat=41.3888, lon=2.159 )
     solicitud = SolicitudOpenMeteo(localidad)

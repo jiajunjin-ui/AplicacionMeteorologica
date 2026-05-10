@@ -12,13 +12,8 @@ class ViewMapa:
         self.ventana.geometry("960x560")
 
         self.marcador_actual = None
-        self.nombre_actual = None
-        self.lat_actual = None
-        self.lon_actual = None
-        self.temperatura_actual = None
-        self.humedad_actual = None
-        self.viento_actual = None
-        self.tipo_icono_actual = None
+        self.marcadores_actuales = []
+        self.datos_marcadores_actuales = []
 
         self.icono_sol = self.cargar_icono("sol.png")
         self.icono_nube = self.cargar_icono("nube.png")
@@ -31,6 +26,7 @@ class ViewMapa:
         self.btn_buscar = Event()
         self.btn_select = Event()
         self.click_mapa = Event()
+        self.btn_buscar_pais = Event()
 
         self.lista_btn = []
 
@@ -46,24 +42,27 @@ class ViewMapa:
         self.columna_izq = tk.Frame(self.ventana, padx=10, pady=10)
         self.columna_izq.grid(row=0, column=0, sticky="nsew")
 
-        tk.Label(self.columna_izq, text="Introduce una ciudad/pais:").grid(row=0, column=0, sticky="w")
+        tk.Label(self.columna_izq, text="Introduce una localidad/país:").grid(row=0, column=0, sticky="w")
 
         self.entrada_ciudad = tk.Entry(self.columna_izq, width=25)
         self.entrada_ciudad.grid(row=1, column=0, sticky="ew")
 
-        btn_buscar = tk.Button(self.columna_izq, text="Ubicar en el mapa", command=lambda: self.opera("1"))
+        btn_buscar = tk.Button(self.columna_izq, text="Mostrar localidad", command=lambda: self.opera("1"))
         btn_buscar.grid(row=2, column=0, pady=5, sticky="ew")
+
+        btn_buscar_pais = tk.Button(self.columna_izq, text="Mostrar país", command=lambda: self.opera("2"))
+        btn_buscar_pais.grid(row=3, column=0, pady=5, sticky="ew")
 
         self.mostrar_temperatura = tk.BooleanVar(value=True)
         self.mostrar_humedad = tk.BooleanVar(value=True)
         self.mostrar_viento = tk.BooleanVar(value=True)
 
         chk_temp = tk.Checkbutton(self.columna_izq, text="Temperatura", variable=self.mostrar_temperatura, command=self.actualizar_marcador_actual)
-        chk_temp.grid(row=3, column=0, pady=5, sticky="w")
+        chk_temp.grid(row=4, column=0, pady=5, sticky="w")
         chk_humedad = tk.Checkbutton(self.columna_izq, text="Humedad", variable=self.mostrar_humedad, command=self.actualizar_marcador_actual)
-        chk_humedad.grid(row=4, column=0, pady=5, sticky="w")
+        chk_humedad.grid(row=5, column=0, pady=5, sticky="w")
         chk_viento = tk.Checkbutton(self.columna_izq, text="Viento", variable=self.mostrar_viento, command=self.actualizar_marcador_actual)
-        chk_viento.grid(row=5, column=0, pady=5, sticky="w")
+        chk_viento.grid(row=6, column=0, pady=5, sticky="w")
 
         self.columna_izq.grid_columnconfigure(0, weight=1)
 
@@ -93,30 +92,20 @@ class ViewMapa:
         self.click_mapa.emit(coordenadas)
 
     def mostrar_ciudad_en_mapa(self, nombre, lat, lon, temperatura, humedad, viento, tipo_icono):
-        self.nombre_actual = nombre
-        self.lat_actual = lat
-        self.lon_actual = lon
-        self.temperatura_actual = temperatura
-        self.humedad_actual = humedad
-        self.viento_actual = viento
-        self.tipo_icono_actual = tipo_icono
+        datos_ciudad = {
+            "nombre": nombre,
+            "lat": lat,
+            "lon": lon,
+            "temperatura": temperatura,
+            "humedad": humedad,
+            "viento": viento,
+            "tipo_icono": tipo_icono
+        }
 
-        if self.marcador_actual is not None:
-            self.marcador_actual.delete()
+        self.mostrar_varias_ciudades_en_mapa([datos_ciudad])
 
         self.mapa.set_position(lat, lon)
         self.mapa.set_zoom(7)
-
-        texto = self.construir_texto_marcador()
-        icono = self.elegir_icono(tipo_icono)
-
-        self.marcador_actual = self.mapa.set_marker(
-            lat,
-            lon,
-            text=texto,
-            icon=icono,
-            icon_anchor="center"
-        )
 
     def cargar_icono(self, nombre_archivo):
         carpeta_actual = os.path.dirname(__file__)
@@ -143,41 +132,37 @@ class ViewMapa:
         if tipo_icono == "niebla":
             return self.icono_niebla
 
-    def construir_texto_marcador(self):
-        if self.nombre_actual is None:
-            return ""
+    def construir_texto_marcador(self, datos):
+        nombre = datos["nombre"]
+        temperatura = datos["temperatura"]
+        humedad = datos["humedad"]
+        viento = datos["viento"]
 
         detalles = []
 
-        if self.mostrar_temperatura.get() and self.temperatura_actual is not None:
-            detalles.append(f"{self.temperatura_actual:.2f} °C")
+        if self.mostrar_temperatura.get() and temperatura is not None:
+            detalles.append(f"{temperatura:.2f} °C")
 
-        if self.mostrar_humedad.get() and self.humedad_actual is not None:
-            detalles.append(f"{self.humedad_actual:.2f}%")
+        if self.mostrar_humedad.get() and humedad is not None:
+            detalles.append(f"{humedad:.2f}%")
 
-        if self.mostrar_viento.get() and self.viento_actual is not None:
-            detalles.append(f"{self.viento_actual:.2f} km/h")
+        if self.mostrar_viento.get() and viento is not None:
+            detalles.append(f"{viento:.2f} km/h")
 
         if not detalles:
-            return self.nombre_actual
+            return nombre
 
-        return self.nombre_actual + "\n" + " | ".join(detalles)
+        return nombre + "\n" + " | ".join(detalles)
 
     def actualizar_marcador_actual(self):
-        if self.nombre_actual is not None:
-            self.mostrar_ciudad_en_mapa(
-                self.nombre_actual,
-                self.lat_actual,
-                self.lon_actual,
-                self.temperatura_actual,
-                self.humedad_actual,
-                self.viento_actual,
-                self.tipo_icono_actual
-            )
+        if self.datos_marcadores_actuales:
+            self.mostrar_varias_ciudades_en_mapa(self.datos_marcadores_actuales)
 
     def opera(self, op):
         if op == "1":
             self.btn_buscar.emit()
+        if op == "2":
+            self.btn_buscar_pais.emit()
 
     def mostrar_lista_ciudades(self, lista):
         self.limpiar_lista_btn()
@@ -188,7 +173,7 @@ class ViewMapa:
                         command=lambda ciudad=nombre_ciudad: self.seleccionar_ciudad(ciudad), 
                         width=30
             )
-            boton.grid(row=n+6, column=0, pady=5, sticky="w")
+            boton.grid(row=n+7, column=0, pady=5, sticky="w")
             self.lista_btn.append(boton)
     
     def limpiar_lista_btn(self):
@@ -202,6 +187,49 @@ class ViewMapa:
            el usuario, para operar con ella."""
         self.btn_select.emit(nombre_ciudad)
         self.limpiar_lista_btn()
+
+    def limpiar_marcadores(self):
+        for marcador in self.marcadores_actuales:
+            marcador.delete()
+
+        self.marcadores_actuales.clear()
+
+    def mostrar_varias_ciudades_en_mapa(self, datos_ciudades):
+        self.datos_marcadores_actuales = datos_ciudades
+
+        self.limpiar_marcadores()
+
+        if not datos_ciudades:
+            return
+
+        suma_lat = 0
+        suma_lon = 0
+
+        for datos in datos_ciudades:
+            lat = datos["lat"]
+            lon = datos["lon"]
+
+            suma_lat = suma_lat + lat
+            suma_lon = suma_lon + lon
+
+            texto = self.construir_texto_marcador(datos)
+            icono = self.elegir_icono(datos["tipo_icono"])
+
+            marcador = self.mapa.set_marker(
+                lat,
+                lon,
+                text=texto,
+                icon=icono,
+                icon_anchor="s"
+            )
+
+            self.marcadores_actuales.append(marcador)
+
+        lat_media = suma_lat / len(datos_ciudades)
+        lon_media = suma_lon / len(datos_ciudades)
+
+        self.mapa.set_position(lat_media, lon_media)
+        self.mapa.set_zoom(5)
 
 if __name__ == "__main__":
     ventana = tk.Tk()
