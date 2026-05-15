@@ -156,7 +156,10 @@ class ViewMapa:
 
     def actualizar_marcador_actual(self):
         if self.datos_marcadores_actuales:
-            self.mostrar_varias_ciudades_en_mapa(self.datos_marcadores_actuales)
+            self.mostrar_varias_ciudades_en_mapa(
+                self.datos_marcadores_actuales,
+                actualizar_vista=False
+            )
 
     def opera(self, op):
         if op == "1":
@@ -194,7 +197,7 @@ class ViewMapa:
 
         self.marcadores_actuales.clear()
 
-    def mostrar_varias_ciudades_en_mapa(self, datos_ciudades):
+    def mostrar_varias_ciudades_en_mapa(self, datos_ciudades, actualizar_vista=True):
         self.datos_marcadores_actuales = datos_ciudades
 
         self.limpiar_marcadores()
@@ -224,6 +227,9 @@ class ViewMapa:
             )
 
             self.marcadores_actuales.append(marcador)
+
+        if not actualizar_vista:
+            return
 
         lat_media = suma_lat / len(datos_ciudades)
         lon_media = suma_lon / len(datos_ciudades)
