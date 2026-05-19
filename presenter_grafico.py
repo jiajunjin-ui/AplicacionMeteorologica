@@ -1,14 +1,16 @@
 import pandas as pd
 
 class PresenterGrafico:
-    def __init__(self, view, model):
+    def __init__(self, view, model, mediador_presenter=None):
         # Agregación: recibe instancias externas
         self.vista = view
         self.modelo = model
+        self.mediador = mediador_presenter
 
         # Suscripción a las señales de la vista
         self.vista.btnBuscar.add_listener(self.f_actualizar_lista)
         self.vista.btnSelect.add_listener(self.f_actualizar_grafico)
+        self.vista.btnCambiarPantallaInicio.add_listener(self.f_cambiar_a_pantalla_Inicio)
 
 
     def f_actualizar_lista(self):
@@ -36,3 +38,10 @@ class PresenterGrafico:
         except Exception as e:
             self.vista.mensaje('Error', str(e))
 
+    def f_cambiar_a_pantalla_Inicio(self):
+        """Cambia a la pantalla del Inicio"""
+        try:
+            self.mediador.cambiar_presenter('PresenterInicio')
+            self.mediador.obtener_presenter_actual()
+        except Exception as e:
+            self.vista.mensaje('Error', str(e))

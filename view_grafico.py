@@ -8,19 +8,21 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
 from model import Event
+from view_base import ViewBase
 
-class ViewGrafico:
+class ViewGrafico(ViewBase):
     """View de la representación gráfica de la evolución de las variables climáticas, predicciones a 3 días."""
-    def __init__(self, ventana2):
-
-      # Configuración visual de la ventana #################
-        self.ventana2 = ventana2
-        self.ventana2.title("Previsión por ciudad")
-        self.ventana2.geometry('800x500')
-        
+    def __init__(self, parent, mediador_view):
+        super().__init__(
+            parent, 
+            mediador_view, 
+            titulo = "Previsión por ciudad", 
+            size = '800x500')
+      
       # Eventos: patrón Observer ###########################
         self.btnBuscar = Event()
         self.btnSelect = Event()
+        self.btnCambiarPantallaInicio = Event()
 
       # Lista de botones con las ciudades ##################
         self.lista_btn = []
@@ -31,8 +33,8 @@ class ViewGrafico:
     
     def setup_ui(self):
         """ Configuración de Widgets """
-      # Farme para agrupar el frame de la interfaz de búsqueda[arriba] y la lista de botones[abajo]
-        self.frame1 = ttk.Frame(self.ventana2)
+      # Frame para agrupar el frame de la interfaz de búsqueda[arriba] y la lista de botones[abajo]
+        self.frame1 = ttk.Frame(self)
         self.frame1.grid(row=0, column=0, padx=150, pady=10)
 
       # Frame que contiene la interfaz de búsqueda [Horizontal]
@@ -41,9 +43,9 @@ class ViewGrafico:
         self.frame2.grid_propagate(False)
 
       # Frame que contiene los CheckBtn[izq.] y el garfico[der.]
-        self.frame3 = ttk.Frame(self.ventana2)
+        self.frame3 = ttk.Frame(self)
         self.frame3.grid(row=1, column=0, padx= 20, sticky="w")
-
+        
 
       # Elementos ##########################################
         self.label_busca = ttk.Label(self.frame2, text="Ciudad:")
@@ -180,11 +182,17 @@ class ViewGrafico:
           
     #--------------------------------------------------------------------
 
+    def cambiar_a_pantalla_inicio(self):
+        self.btnCambiarPantallaInicio.emit()
+
     def mensaje(self, prompt, txt):
         """Muestra error con messagebox"""
         tk.messagebox.showerror(prompt, txt)
 
 if __name__ == "__main__":
+    from mediador_view import MediadorView
     ventana = tk.Tk()
-    vista = ViewGrafico(ventana)
+    mediador_view = MediadorView(ventana)
+    mediador_view.cambiar_frame_view('ViewGrafico')
+    mediador_view.obtener_frame_view_actual()
     ventana.mainloop()
