@@ -110,12 +110,9 @@ class PresenterMapa:
                 self.vista.mostrar_error("Introduce un país.")
                 return
 
-            cantidad_ciudades = 3
+            cantidad_ciudades = 10
 
-            pais = self.modelo.consultar_clima_actual_pais(
-                nombre_pais,
-                cantidad_ciudades
-            )
+            pais = self.modelo.consultar_clima_actual_pais(nombre_pais, cantidad_ciudades)
 
             datos_ciudades = []
 

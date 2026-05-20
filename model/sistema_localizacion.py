@@ -55,7 +55,7 @@ class SistemaLocalizacion:
     
 
     # Mapa ####################################################################
-    def buscador_nombre_coordenads(self, coord):
+    def buscador_nombre_coordenadas(self, coord):
         try:
             lat, lon = coord
             params = {
