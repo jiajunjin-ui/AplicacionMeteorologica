@@ -6,6 +6,7 @@ from mediador_presenter import MediadorPresenter
 class main():
     ventana = tk.Tk()
     ventana.resizable(False, False)
+
     modelo = AppMeteo()
 
     mediador_view = MediadorView(ventana)

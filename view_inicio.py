@@ -21,7 +21,7 @@ class ViewInicio(ViewBase):
     def setup_ui(self):
         # Frame Centrado #####################################
         self.frame_central = ttk.Frame(self)
-        self.frame_central.grid(row=0, column=0, padx=120, pady=80)
+        self.frame_central.grid(row=0, column=0, padx=110, pady=80)
 
         # Elementos ##########################################
         self.btn_ir_a_grafico = tk.Button(self.frame_central, 

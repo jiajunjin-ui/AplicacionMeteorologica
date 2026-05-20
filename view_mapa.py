@@ -42,8 +42,9 @@ class ViewMapa(ViewBase):
         self.grid_rowconfigure(0, weight=1)
 
         # COLUMNA IZQUIERDA
-        self.columna_izq = tk.Frame(self, padx=10, pady=10)
+        self.columna_izq = tk.Frame(self, width=200, padx=10, pady=10)
         self.columna_izq.grid(row=0, column=0, sticky="nsew")
+        self.columna_izq.grid_propagate(False)
 
         tk.Label(self.columna_izq, text="Introduce una localidad/país:").grid(row=0, column=0, sticky="w")
 
@@ -179,7 +180,7 @@ class ViewMapa(ViewBase):
                         command=lambda ciudad=nombre_ciudad: self.seleccionar_ciudad(ciudad), 
                         width=30
             )
-            boton.grid(row=n+7, column=0, pady=5, sticky="w")
+            boton.grid(row=n+7, column=0, pady=2)
             self.lista_btn.append(boton)
     
     def limpiar_lista_btn(self):
