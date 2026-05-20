@@ -2,7 +2,6 @@ import pandas as pd
 
 class PresenterGrafico:
     def __init__(self, view, model, mediador_presenter=None):
-        # Agregación: recibe instancias externas
         self.vista = view
         self.modelo = model
         self.mediador = mediador_presenter

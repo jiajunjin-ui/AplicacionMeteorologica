@@ -2,14 +2,17 @@ import tkinter as tk
 import tkinter.messagebox
 from tkintermapview import TkinterMapView
 from model import Event
+from view_base import ViewBase
 import os
 from PIL import Image, ImageTk
 
-class ViewMapa:
-    def __init__(self, ventana):
-        self.ventana = ventana
-        self.ventana.title("Mapa meteorologico")
-        self.ventana.geometry("960x560")
+class ViewMapa(ViewBase):
+    def __init__(self, parent, mediador_view):
+        super().__init__(
+            parent, 
+            mediador_view, 
+            titulo = "Mapa meteorologico", 
+            size = '960x560')
 
         self.marcador_actual = None
         self.marcadores_actuales = []
@@ -34,12 +37,12 @@ class ViewMapa:
 
     def setup_ui(self):
         """VENTANA PRINCIPAL TIENE DOS COLUMNAS: DERECHA (MAPA) - IZQUIERDA (CONTROLES)"""
-        self.ventana.grid_columnconfigure(0, weight=1)
-        self.ventana.grid_columnconfigure(1, weight=3)
-        self.ventana.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=3)
+        self.grid_rowconfigure(0, weight=1)
 
         # COLUMNA IZQUIERDA
-        self.columna_izq = tk.Frame(self.ventana, padx=10, pady=10)
+        self.columna_izq = tk.Frame(self, padx=10, pady=10)
         self.columna_izq.grid(row=0, column=0, sticky="nsew")
 
         tk.Label(self.columna_izq, text="Introduce una localidad/país:").grid(row=0, column=0, sticky="w")
@@ -67,9 +70,9 @@ class ViewMapa:
         self.columna_izq.grid_columnconfigure(0, weight=1)
 
         # COLUMNA DERECHA
-        mapa = tk.Frame(self.ventana)
+        mapa = tk.Frame(self)
         mapa.grid(row=0, column=1, sticky="nsew")
-        self.mapa = TkinterMapView(mapa, width=600, height=500, corner_radius=0)
+        self.mapa = TkinterMapView(mapa, width=600, height=560, corner_radius=0)
         self.mapa.pack(fill="both", expand=True)
         self.mapa.set_position(40.4168, -3.7038)
         self.mapa.set_zoom(6)
@@ -238,6 +241,9 @@ class ViewMapa:
         self.mapa.set_zoom(5)
 
 if __name__ == "__main__":
+    from mediador_view import MediadorView
     ventana = tk.Tk()
-    vista = ViewMapa(ventana)
+    mediador_view = MediadorView(ventana)
+    mediador_view.cambiar_frame_view('ViewMapa')
+    mediador_view.obtener_frame_view_actual()
     ventana.mainloop()
