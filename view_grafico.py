@@ -19,14 +19,14 @@ class ViewGrafico(ViewBase):
             titulo = "Previsión por ciudad", 
             size = '800x500')
       
-      # Eventos: patrón Observer ###########################
+      # Eventos: patrón Observer ############################
         self.btnBuscar = Event()
         self.btnSelect = Event()
         self.btnCambiarPantallaInicio = Event()
 
-      # Lista de botones con las ciudades ##################
+      # Lista de botones con las ciudades ###################
         self.lista_btn = []
-      # Lista de CheckButtons de variables climáticas ######
+      # Lista de CheckButtons de variables climáticas #######
         self.lista_checkbtn = []
 
         self.setup_ui()
@@ -47,12 +47,12 @@ class ViewGrafico(ViewBase):
         self.frame3.grid(row=1, column=0, padx= 20, sticky="w")
         
 
-      # Elementos ##########################################
+      # Elementos ###########################################
         self.label_busca = ttk.Label(self.frame2, text="Ciudad:")
         self.entry_busca = ttk.Entry(self.frame2, width=50)
         self.btn_busca = ttk.Button(self.frame2, text="Buscar", command=lambda: self.actualizar_lista_btn())
 
-      # Organización #######################################
+      # Organización ########################################
         self.label_busca.grid(row=0, column=0, pady=5)
         self.entry_busca.grid(row=0, column=1, pady=5)
         self.btn_busca.grid(row=0, column=2, pady=5)
@@ -101,29 +101,29 @@ class ViewGrafico(ViewBase):
     def crear_grafico(self, date, temp, hum_rel, viento, prob_precip, estado_cielo):
         """Método que crear los widgets (CheckButtons) y el canvas del 
         gráfico"""
-      # Guardar datos  
+      # Guardar datos ####################################### 
         self.date = date
-        nombre_vars = ["Temperatura", "Humedad Rel.", "Viento", "Prob. Precipitación", "Estado cielo"]
+        nombre_vars = ["Temperatura", "Humedad Rel.", "Viento", "Prob. Precipitación", "Estado Cielo"]
         self.datos_variables = {
             "Temperatura": temp,
             "Humedad Rel.": hum_rel,
             "Viento": viento,
             "Prob. Precipitación": prob_precip,
-            "Estado cielo": estado_cielo
-            }
+            "Estado Cielo": estado_cielo
+            }  
 
-      # Contenedor para los CheckBtn #######################
+      # Contenedor para los CheckBtn ########################
         self.conten_checkbtn = ttk.Frame(self.frame3)
         self.conten_checkbtn.grid(row=0, column=0)
 
-      # Creación de fix y axis para incorporar en canvas ###
+      # Creación de fix y axis para incorporar en canvas ####
         self.fig, self.ax = plt.subplots(figsize=(6,3.5))
 
         self.fig.tight_layout()
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.frame3)
         self.canvas.get_tk_widget().grid(row=0, column=1, columnspan=2)  
        
-      # Diccionario: key=nombre_var, value=BooleanVar ######
+      # Diccionario: key=nombre_var, value=BooleanVar #######
         self.var_y_estado = {}   
 
         for n, var in enumerate(nombre_vars):
@@ -143,30 +143,29 @@ class ViewGrafico(ViewBase):
     def actualizar_grafico(self):
         """Método que representa los resultados en el canvas del gráfico"""
         self.ax.clear()
-        
+
         vars_select = []
         for var, estado in self.var_y_estado.items():
             if estado.get():  #  -----> estado = tk.BooleanVar(value=True);  estado.get
                 vars_select.append(var)
 
-        if vars_select:
-            
+        if vars_select:  
             self.ax.xaxis_date()
             self.ax.xaxis.set_major_formatter(mdates.DateFormatter('%d-%m-%Y\n%H:%M'))
             self.ax.xaxis.set_major_locator(mdates.HourLocator(byhour=[0, 12]))
-      
+
             for var in vars_select:
                 self.ax.plot(self.date, self.datos_variables[var], label=var)
 
-            # Quitar margenes y juste de limites de X & Y ##
+            # Quitar margenes y juste de limites de X & Y ###
             self.ax.set_xlim(left=min(self.date), right=max(self.date))
             self.ax.set_ylim(bottom=0)
             self.ax.margins(x=0)
             
-            # Leyenda ######################################
+            # Leyenda #######################################
             self.ax.legend(loc='upper right', fontsize='small')
             
-            # Formato de etiquetas de X ####################
+            # Formato de etiquetas de X #####################
             plt.setp(self.ax.get_xticklabels(), rotation=30, ha='center', fontsize=8) 
             self.fig.subplots_adjust(bottom=0.25)
     
@@ -175,11 +174,25 @@ class ViewGrafico(ViewBase):
     def limpiar_grafico(self):
         """Método que borra canvas y lista de CheckButtons."""
         if self.lista_checkbtn:
-            self.canvas.get_tk_widget().destroy()
+            if self.canvas is not None:
+                try:
+                    self.canvas.flush_events()
+                    self.canvas.get_tk_widget().destroy()
+                except:
+                    pass
+                self.canvas = None
+            if self.fig is not None:
+                try:
+                    plt.close(self.fig)
+                except:
+                    pass
+                self.fig = None
+                self.ax = None
+                
             for checkbtn in self.lista_checkbtn:
                 checkbtn.destroy()
-        self.lista_checkbtn.clear()
-          
+            self.lista_checkbtn.clear()
+
     #--------------------------------------------------------------------
 
     def cambiar_a_pantalla_inicio(self):

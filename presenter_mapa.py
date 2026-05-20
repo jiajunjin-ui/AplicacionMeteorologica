@@ -1,9 +1,10 @@
 class PresenterMapa:
     """Actua como puente entre la logica y la pantalla."""
 
-    def __init__(self, view, model):
+    def __init__(self, view, model, mediador_presenter=None):
         self.vista = view
         self.modelo = model
+        self.mediador = mediador_presenter
 
         self.vista.btn_buscar.add_listener(self.f_buscar_nombre)
         self.vista.btn_select.add_listener(self.f_buscar_por_nombre)
