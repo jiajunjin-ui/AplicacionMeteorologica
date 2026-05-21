@@ -1,11 +1,13 @@
 import tkinter as tk
+import matplotlib.pyplot as plt
+import gc
+
 from view_grafico import ViewGrafico
 from view_mapa import ViewMapa
 from view_inicio import ViewInicio
 
 class MediadorView:
     def __init__(self, ventana):
-
         # Stacked de pantallas ############################
         self.ventana = ventana
         self.contenedor = tk.Frame(self.ventana)
@@ -13,7 +15,10 @@ class MediadorView:
     
         self._dic_views = {}
         self._view_actual = None 
-        
+
+        # Cierre de Ventana ###############################
+        self.ventana.protocol("WM_DELETE_WINDOW", self._cerrar_view)
+
         # Registro de pantallas ###########################
         self._registrar_view(ViewGrafico)
         self._registrar_view(ViewMapa)
@@ -36,6 +41,21 @@ class MediadorView:
         else:
             raise KeyError(f'La pantalla {nombre_pantalla} no existe')
     
+    def _cerrar_view(self):
+        for fig_num in plt.get_fignums():
+            try:
+                fig = plt.figure(fig_num)
+                fig.canvas.stop_event_loop()
+                fig.canvas.flush_events()
+                plt.close(fig)
+            except:
+                pass
+        
+        plt.close('all')
+        gc.collect()
+
+        self.ventana.destroy()
+
     def obtener_frame_view_actual(self):
         return self._view_actual
     

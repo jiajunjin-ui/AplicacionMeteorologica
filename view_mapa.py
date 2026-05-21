@@ -42,7 +42,7 @@ class ViewMapa(ViewBase):
         self.grid_rowconfigure(0, weight=1)
 
         # COLUMNA IZQUIERDA
-        self.columna_izq = tk.Frame(self, width=200, padx=10, pady=10)
+        self.columna_izq = tk.Frame(self, width=250, padx=10, pady=10) 
         self.columna_izq.grid(row=0, column=0, sticky="nsew")
         self.columna_izq.grid_propagate(False)
 
@@ -73,7 +73,7 @@ class ViewMapa(ViewBase):
         # COLUMNA DERECHA
         mapa = tk.Frame(self)
         mapa.grid(row=0, column=1, sticky="nsew")
-        self.mapa = TkinterMapView(mapa, width=600, height=560, corner_radius=0)
+        self.mapa = TkinterMapView(mapa, width=710, height=560, corner_radius=0)
         self.mapa.pack(fill="both", expand=True)
         self.mapa.set_position(40.4168, -3.7038)
         self.mapa.set_zoom(6)

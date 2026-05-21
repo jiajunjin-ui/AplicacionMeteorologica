@@ -34,28 +34,32 @@ class ViewGrafico(ViewBase):
     def setup_ui(self):
         """ Configuración de Widgets """
       # Frame para agrupar el frame de la interfaz de búsqueda[arriba] y la lista de botones[abajo]
-        self.frame1 = ttk.Frame(self)
-        self.frame1.grid(row=0, column=0, padx=150, pady=10)
+        self.frame1 = tk.Frame(self)
+        self.frame1.grid(row=0, column=0, pady=10)
 
       # Frame que contiene la interfaz de búsqueda [Horizontal]
-        self.frame2 = ttk.Frame(self.frame1, width=800, height=50)
+        self.frame2 = tk.Frame(self.frame1, width=800, height=60)
         self.frame2.grid(row=0, column=0, pady=10, padx=10)
         self.frame2.grid_propagate(False)
 
       # Frame que contiene los CheckBtn[izq.] y el garfico[der.]
-        self.frame3 = ttk.Frame(self)
+        self.frame3 = tk.Frame(self)
         self.frame3.grid(row=1, column=0, padx= 20, sticky="w")
-        
+    
 
       # Elementos ###########################################
         self.label_busca = ttk.Label(self.frame2, text="Ciudad:")
         self.entry_busca = ttk.Entry(self.frame2, width=50)
         self.btn_busca = ttk.Button(self.frame2, text="Buscar", command=lambda: self.actualizar_lista_btn())
-
+        self.btn_cambiar_a_inicio = ttk.Button(self.frame2, text="Inicio", command=lambda: self.cambiar_a_pantalla_inicio())
+        self.espacio = ttk.Label(self.frame2, text=" ")
+    
       # Organización ########################################
-        self.label_busca.grid(row=0, column=0, pady=5)
-        self.entry_busca.grid(row=0, column=1, pady=5)
-        self.btn_busca.grid(row=0, column=2, pady=5)
+        self.label_busca.grid(row=1, column=2, pady=5)
+        self.entry_busca.grid(row=1, column=3, pady=5)
+        self.btn_busca.grid(row=1, column=4, pady=5)
+        self.espacio.grid(row=1, column=1, padx=50)
+        self.btn_cambiar_a_inicio.grid(row=0, column=0, pady=2)
 
     
 ############################## Parte lògica ##############################
@@ -76,7 +80,7 @@ class ViewGrafico(ViewBase):
                         command=lambda ciudad=nombre_ciudad: self.seleccionar_ciudad(ciudad), 
                         width=30
             )
-            boton.grid(row=n+1, column=0, padx=100, sticky="w")
+            boton.grid(row=n+1, column=0, sticky="w", padx=250)
             self.lista_btn.append(boton)
 
     def actualizar_lista_btn(self):
@@ -113,7 +117,7 @@ class ViewGrafico(ViewBase):
             }  
 
       # Contenedor para los CheckBtn ########################
-        self.conten_checkbtn = ttk.Frame(self.frame3)
+        self.conten_checkbtn = tk.Frame(self.frame3)
         self.conten_checkbtn.grid(row=0, column=0)
 
       # Creación de fix y axis para incorporar en canvas ####
