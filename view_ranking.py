@@ -8,11 +8,10 @@ from model import Event
 class ViewRanking:
     def __init__(self, ventana):
         self.ventana = ventana
-        ventana.title("Ranking")
-        ventana.geometry("960x560")
+        self.ventana.title("Ranking")
+        self.ventana.geometry("960x560")
 
         self.lista_btn_paises = []
-        self.pais_seleccionado = None
 
         self.btnBuscarPais = Event()
         self.btnSelectPais = Event()
@@ -42,7 +41,10 @@ class ViewRanking:
         )
         self.btn_buscar_pais.grid(row=2, column=0, pady=5, sticky="ew")
 
-        self.label_pais_seleccionado = tk.Label(self.columna_izq, text="País seleccionado: ninguno")
+        self.label_pais_seleccionado = tk.Label(
+            self.columna_izq,
+            text="País seleccionado: ninguno"
+        )
         self.label_pais_seleccionado.grid(row=3, column=0, sticky="w", pady=(10, 0))
 
         tk.Label(self.columna_izq, text="Cantidad de ciudades:").grid(row=4, column=0, sticky="w", pady=(10, 0))
@@ -59,8 +61,7 @@ class ViewRanking:
                 "Más calurosas",
                 "Más frías",
                 "Más viento",
-                "Más humedad",
-                "Mejor clima"
+                "Más humedad"
             ],
             state="readonly"
         )
@@ -79,10 +80,17 @@ class ViewRanking:
         # COLUMNA DERECHA
         self.columna_der = tk.Frame(self.ventana, padx=10, pady=10)
         self.columna_der.grid(row=0, column=1, sticky="nsew")
-        self.columna_der.grid_rowconfigure(0, weight=1)
+        self.columna_der.grid_rowconfigure(1, weight=1)
         self.columna_der.grid_columnconfigure(0, weight=1)
 
-        columnas = ("posicion", "ciudad", "temperatura", "humedad", "viento", "valor")
+        self.label_titulo_ranking = tk.Label(
+            self.columna_der,
+            text="Ranking de ciudades más pobladas del país",
+            font=("Arial", 12, "bold")
+        )
+        self.label_titulo_ranking.grid(row=0, column=0, sticky="w", pady=(0, 10))
+
+        columnas = ("posicion", "ciudad", "temperatura", "humedad", "viento")
         self.tabla = ttk.Treeview(
             self.columna_der,
             columns=columnas,
@@ -94,16 +102,14 @@ class ViewRanking:
         self.tabla.heading("temperatura", text="Temp. °C")
         self.tabla.heading("humedad", text="Humedad %")
         self.tabla.heading("viento", text="Viento km/h")
-        self.tabla.heading("valor", text="Valor")
 
         self.tabla.column("posicion", width=50, anchor="center")
-        self.tabla.column("ciudad", width=180)
-        self.tabla.column("temperatura", width=90, anchor="center")
-        self.tabla.column("humedad", width=90, anchor="center")
-        self.tabla.column("viento", width=100, anchor="center")
-        self.tabla.column("valor", width=120, anchor="center")
+        self.tabla.column("ciudad", width=220)
+        self.tabla.column("temperatura", width=110, anchor="center")
+        self.tabla.column("humedad", width=110, anchor="center")
+        self.tabla.column("viento", width=120, anchor="center")
 
-        self.tabla.grid(row=0, column=0, sticky="nsew")
+        self.tabla.grid(row=1, column=0, sticky="nsew")
 
         self.scroll_tabla = ttk.Scrollbar(
             self.columna_der,
@@ -111,7 +117,7 @@ class ViewRanking:
             command=self.tabla.yview
         )
         self.tabla.configure(yscrollcommand=self.scroll_tabla.set)
-        self.scroll_tabla.grid(row=0, column=1, sticky="ns")
+        self.scroll_tabla.grid(row=1, column=1, sticky="ns")
 
     def entrada(self):
         return self.entrada_pais.get().strip()
@@ -120,13 +126,7 @@ class ViewRanking:
         return self.combo_tipo.get()
 
     def obtener_cantidad_ciudades(self):
-        try:
-            return int(self.entry_cantidad.get())
-        except ValueError:
-            return 10
-
-    def obtener_pais_seleccionado(self):
-        return self.pais_seleccionado
+        return int(self.entry_cantidad.get())
 
     def actualizar_lista_paises(self):
         self.btnBuscarPais.emit()
@@ -138,19 +138,20 @@ class ViewRanking:
             boton = tk.Button(
                 self.columna_izq,
                 text=nombre_pais,
-                command=lambda pais=nombre_pais: self.seleccionar_pais(pais),
-                width=30
+                command=lambda pais=nombre_pais: self.seleccionar_pais(pais)
             )
-            boton.grid(row=n + 9, column=0, pady=5, sticky="w")
+            boton.grid(row=n + 9, column=0, pady=5, sticky="ew")
             self.lista_btn_paises.append(boton)
 
     def seleccionar_pais(self, nombre_pais):
-        self.pais_seleccionado = nombre_pais
+        self.actualizar_label_pais(nombre_pais)
+        self.btnSelectPais.emit(nombre_pais)
+        self.limpiar_lista_paises()
+
+    def actualizar_label_pais(self, nombre_pais):
         self.label_pais_seleccionado.config(
             text=f"País seleccionado: {nombre_pais}"
         )
-        self.btnSelectPais.emit(nombre_pais)
-        self.limpiar_lista_paises()
 
     def limpiar_lista_paises(self):
         for boton in self.lista_btn_paises:
@@ -164,7 +165,7 @@ class ViewRanking:
         for item in self.tabla.get_children():
             self.tabla.delete(item)
 
-    def mostrar_ranking(self, filas_ranking, titulo=None):
+    def mostrar_ranking(self, filas_ranking):
         self.limpiar_ranking()
 
         for fila in filas_ranking:
@@ -176,8 +177,7 @@ class ViewRanking:
                     fila["ciudad"],
                     fila["temperatura"],
                     fila["humedad"],
-                    fila["viento"],
-                    fila["valor"]
+                    fila["viento"]
                 )
             )
 
