@@ -27,6 +27,7 @@ class ViewMapa:
         self.btn_select = Event()
         self.click_mapa = Event()
         self.btn_buscar_pais = Event()
+        self.btn_select_pais = Event()
 
         self.lista_btn = []
 
@@ -80,7 +81,7 @@ class ViewMapa:
         return self.entrada_ciudad.get().strip()
 
     def mostrar_error(self, mensaje):
-        print(mensaje)
+        tk.messagebox.showerror("Error", mensaje)
 
     def al_hacer_click_mapa(self, coordenadas):
         """
@@ -178,6 +179,17 @@ class ViewMapa:
             )
             boton.grid(row=n+7, column=0, pady=5, sticky="w")
             self.lista_btn.append(boton)
+
+    def mostrar_lista_paises(self, lista):
+        self.limpiar_lista_btn()
+        for n, nombre_pais in enumerate(lista):
+            boton = tk.Button(
+                        self.columna_izq,
+                        text=nombre_pais,
+                        command=lambda pais=nombre_pais: self.seleccionar_pais(pais)
+            )
+            boton.grid(row=n+7, column=0, pady=5, sticky="ew")
+            self.lista_btn.append(boton)
     
     def limpiar_lista_btn(self):
         """Funcion que borra la lista de botones."""
@@ -189,6 +201,10 @@ class ViewMapa:
         """Funcion que toma la referencia (str) de la ciudad elegida por
            el usuario, para operar con ella."""
         self.btn_select.emit(nombre_ciudad)
+        self.limpiar_lista_btn()
+
+    def seleccionar_pais(self, nombre_pais):
+        self.btn_select_pais.emit(nombre_pais)
         self.limpiar_lista_btn()
 
     def limpiar_marcadores(self):

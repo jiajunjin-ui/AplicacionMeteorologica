@@ -9,19 +9,26 @@ class PresenterMapa:
         self.vista.btn_select.add_listener(self.f_buscar_por_nombre)
         self.vista.click_mapa.add_listener(self.f_buscar_por_click)
         self.vista.btn_buscar_pais.add_listener(self.f_buscar_pais)
+        self.vista.btn_select_pais.add_listener(self.f_buscar_por_pais)
 
     def f_buscar_nombre(self):
-        nombre_ciudad = self.vista.obtener_ciudad_buscada()
+        try:
+            nombre_ciudad = self.vista.obtener_ciudad_buscada()
 
-        if not nombre_ciudad:
-            self.vista.mostrar_error("Introduce una ciudad para buscar.")
-            return
-        list_ciudades = self.modelo.buscar_nombre_ciudad(nombre_ciudad)
+            if not nombre_ciudad:
+                self.vista.mostrar_error("Introduce una ciudad para buscar.")
+                return
 
-        if list_ciudades is None:
-            self.vista.mostrar_error("No se encontro la ciudad o no se pudieron obtener datos.")
-            return
-        self.vista.mostrar_lista_ciudades(list_ciudades)
+            list_ciudades = self.modelo.buscar_nombre_ciudad(nombre_ciudad)
+
+            if list_ciudades is None:
+                self.vista.mostrar_error("No se encontro la ciudad o no se pudieron obtener datos.")
+                return
+
+            self.vista.mostrar_lista_ciudades(list_ciudades)
+
+        except Exception as e:
+            self.vista.mostrar_error(str(e))
 
     def f_buscar_por_nombre(self, nombre_select):
         try:
@@ -107,9 +114,17 @@ class PresenterMapa:
             nombre_pais = self.vista.obtener_ciudad_buscada()
 
             if not nombre_pais:
-                self.vista.mostrar_error("Introduce un país.")
+                self.vista.mostrar_error("Introduce un pais.")
                 return
 
+            lista_paises = self.modelo.buscar_nombre_pais(nombre_pais)
+            self.vista.mostrar_lista_paises(lista_paises)
+
+        except Exception as e:
+            self.vista.mostrar_error(str(e))
+
+    def f_buscar_por_pais(self, nombre_pais):
+        try:
             cantidad_ciudades = 10
 
             pais = self.modelo.consultar_clima_actual_pais(nombre_pais, cantidad_ciudades)
