@@ -16,6 +16,15 @@ class ViewRanking:
         self.btnBuscarPais = Event()
         self.btnSelectPais = Event()
         self.btnGenerarRanking = Event()
+        self.opciones_ranking = [
+            ("mas_calurosas", "M\u00e1s calurosas"),
+            ("mas_frias", "M\u00e1s fr\u00edas"),
+            ("mas_viento", "Mas viento"),
+            ("mas_humedad", "Mas humedad"),
+        ]
+        self.ranking_por_etiqueta = {
+            etiqueta: codigo for codigo, etiqueta in self.opciones_ranking
+        }
 
         self.setup_ui()
 
@@ -29,21 +38,21 @@ class ViewRanking:
         self.columna_izq = tk.Frame(self.ventana, padx=10, pady=10)
         self.columna_izq.grid(row=0, column=0, sticky="nsew")
 
-        tk.Label(self.columna_izq, text="Introduce un país:").grid(row=0, column=0, sticky="w")
+        tk.Label(self.columna_izq, text="Introduce un pa\u00eds:").grid(row=0, column=0, sticky="w")
 
         self.entrada_pais = tk.Entry(self.columna_izq, width=25)
         self.entrada_pais.grid(row=1, column=0, sticky="ew")
 
         self.btn_buscar_pais = tk.Button(
             self.columna_izq,
-            text="Buscar país",
+            text="Buscar pa\u00eds",
             command=self.actualizar_lista_paises
         )
         self.btn_buscar_pais.grid(row=2, column=0, pady=5, sticky="ew")
 
         self.label_pais_seleccionado = tk.Label(
             self.columna_izq,
-            text="País seleccionado: ninguno"
+            text="Pa\u00eds seleccionado: ninguno"
         )
         self.label_pais_seleccionado.grid(row=3, column=0, sticky="w", pady=(10, 0))
 
@@ -57,12 +66,7 @@ class ViewRanking:
 
         self.combo_tipo = ttk.Combobox(
             self.columna_izq,
-            values=[
-                "Más calurosas",
-                "Más frías",
-                "Más viento",
-                "Más humedad"
-            ],
+            values=[etiqueta for _, etiqueta in self.opciones_ranking],
             state="readonly"
         )
         self.combo_tipo.current(0)
@@ -99,7 +103,7 @@ class ViewRanking:
 
         self.tabla.heading("posicion", text="#")
         self.tabla.heading("ciudad", text="Ciudad")
-        self.tabla.heading("temperatura", text="Temp. °C")
+        self.tabla.heading("temperatura", text="Temp. C")
         self.tabla.heading("humedad", text="Humedad %")
         self.tabla.heading("viento", text="Viento km/h")
 
@@ -123,7 +127,8 @@ class ViewRanking:
         return self.entrada_pais.get().strip()
 
     def obtener_tipo_ranking(self):
-        return self.combo_tipo.get()
+        etiqueta = self.combo_tipo.get()
+        return self.ranking_por_etiqueta[etiqueta]
 
     def obtener_cantidad_ciudades(self):
         return int(self.entry_cantidad.get())

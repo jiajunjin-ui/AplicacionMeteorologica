@@ -1,8 +1,5 @@
-from model.ranking_strategy import RankingFactory
-
-
 class PresenterRanking:
-    """Presenter de la pestaña Ranking."""
+    """Presenter de la pestana Ranking."""
 
     def __init__(self, view, model):
         self.vista = view
@@ -14,6 +11,9 @@ class PresenterRanking:
         self.vista.btnGenerarRanking.add_listener(self.f_generar_ranking)
 
     def f_buscar_pais(self):
+        """
+        Funcion que recibe el pais introducido por el usuario, lo comprueba y devuelve una lista con los pais seleccionados.
+        """
         try:
             texto = self.vista.entrada()
 
@@ -32,9 +32,15 @@ class PresenterRanking:
             self.vista.mensaje("Error", str(e))
 
     def f_seleccionar_pais(self, nombre_pais):
+        """
+        Funcion que guarda el pais seleccionado por el usuario
+        """
         self.pais_seleccionado = nombre_pais
 
     def f_generar_ranking(self):
+        """
+        Funcion que recibe la el pais y genera una lista con el ranking y finalmente lo pasa al view para mostrar.
+        """
         try:
             if self.pais_seleccionado is None:
                 self.vista.mensaje("Error", "Primero selecciona un país de la lista.")
@@ -47,13 +53,7 @@ class PresenterRanking:
                 self.vista.mensaje("Error", "La cantidad de ciudades debe ser mayor que 0.")
                 return
 
-            pais = self.modelo.consultar_clima_actual_pais(
-                self.pais_seleccionado,
-                cantidad
-            )
-
-            estrategia = RankingFactory.crear(tipo_ranking)
-            ciudades_ordenadas = estrategia.ordenar(pais.localidades)
+            ciudades_ordenadas = self.modelo.consultar_ranking_pais(self.pais_seleccionado, cantidad,tipo_ranking)
 
             filas_ranking = self.crear_filas_ranking(ciudades_ordenadas)
             self.vista.mostrar_ranking(filas_ranking)
@@ -62,6 +62,9 @@ class PresenterRanking:
             self.vista.mensaje("Error", str(e))
 
     def crear_filas_ranking(self, ciudades):
+        """
+        Funcion que crea una lista de filas para mostrarlas
+        """
         filas = []
 
         for n, ciudad in enumerate(ciudades, start=1):

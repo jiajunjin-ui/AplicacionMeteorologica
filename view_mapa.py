@@ -11,9 +11,9 @@ class ViewMapa:
         self.ventana.title("Mapa meteorologico")
         self.ventana.geometry("960x560")
 
-        self.marcador_actual = None
-        self.marcadores_actuales = []
-        self.datos_marcadores_actuales = []
+        self.marcador_actual = None # Marcador en el mapa
+        self.marcadores_actuales = [] # Marcadores en el mapa cuando se busca pais
+        self.datos_marcadores_actuales = [] # Datos de cada marcador
 
         self.icono_sol = self.cargar_icono("sol.png")
         self.icono_nube = self.cargar_icono("nube.png")
@@ -23,13 +23,13 @@ class ViewMapa:
         self.icono_niebla = self.cargar_icono("niebla.png")
         self.icono_luna = self.cargar_icono("luna.png")
 
-        self.btn_buscar = Event()
-        self.btn_select = Event()
-        self.click_mapa = Event()
-        self.btn_buscar_pais = Event()
-        self.btn_select_pais = Event()
+        self.btn_buscar = Event() # Boton para buscar localidad
+        self.btn_select = Event() # Boton para seleccionar localidades proporcionadas
+        self.click_mapa = Event() # Boton para clicar mapa
+        self.btn_buscar_pais = Event() # Boton para buscar el pais
+        self.btn_select_pais = Event() # Boton para seleccionar el pais proporcionado
 
-        self.lista_btn = []
+        self.lista_btn = [] # Lista de botones con localidades/paises similares
 
         self.setup_ui()
 
@@ -85,10 +85,7 @@ class ViewMapa:
 
     def al_hacer_click_mapa(self, coordenadas):
         """
-        Esta funcion se ejecuta cuando el usuario hace clic en el mapa.
-
-        coordenadas es una tupla:
-        (latitud, longitud)
+        Esta funcion se ejecuta cuando el usuario hace clic en el mapa y devuelve las coordenadas en una tupla (latitud, longitud)
         """
         self.click_mapa.emit(coordenadas)
 

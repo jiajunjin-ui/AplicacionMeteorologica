@@ -97,9 +97,8 @@ if __name__ == '__main__':
     localidad1 = sistema_localitzacio.seleccionar_ciudad(lista_nombres[0])
     print("Localidad 1:", localidad1.nombre, localidad1.lat, localidad1.lon)
 
-    localidad2 = sistema_localitzacio.buscador_nombre_coordenads((41.4307, 2.2186))
+    localidad2 = sistema_localitzacio.buscador_nombre_coordenadas((41.4307, 2.2186))
     print("Localidad 2:", localidad2.nombre, localidad2.lat, localidad2.lon)
-
 
 
 

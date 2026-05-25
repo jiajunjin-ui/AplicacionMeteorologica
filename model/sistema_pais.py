@@ -46,7 +46,7 @@ class SistemaPais:
         return catalogo
 
     def buscador_nombre_pais(self, texto):
-        """Busca paises que coincidan con el texto introducido."""
+        """Busca paises cuyo nombre empieza por el texto introducido."""
 
         texto = texto.strip()
 
@@ -54,7 +54,6 @@ class SistemaPais:
             raise ValueError("Se deben introducir al menos 3 letras del pais.")
 
         texto_normalizado = self.normalizar_texto(texto)
-
         self._paises_encontrados = {}
 
         for nombre, pais in self._catalogo_paises.items():
@@ -65,16 +64,6 @@ class SistemaPais:
                     nombre=pais.nombre,
                     codigo_iso=pais.codigo_iso
                 )
-
-        if not self._paises_encontrados:
-            for nombre, pais in self._catalogo_paises.items():
-                nombre_normalizado = self.normalizar_texto(nombre)
-
-                if texto_normalizado in nombre_normalizado:
-                    self._paises_encontrados[nombre] = Pais(
-                        nombre=pais.nombre,
-                        codigo_iso=pais.codigo_iso
-                    )
 
         if not self._paises_encontrados:
             raise ValueError("No se encontro ningun pais.")
@@ -158,7 +147,7 @@ class SistemaPais:
 
         raise ValueError("Introduce un pais valido.")
 
-    def buscar_ciudades_principales(self, nombre_pais, cantidad=3):
+    def buscar_ciudades_principales(self, nombre_pais, cantidad):
         pais = self.buscar_pais(nombre_pais)
         pais.localidades = []
 
