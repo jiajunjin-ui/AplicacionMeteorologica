@@ -10,14 +10,15 @@ class ViewInicio(ViewBase):
         super().__init__(
             parent, 
             mediador_view, 
-            titulo = "Prueba", 
+            titulo = "Aplicación Meteorológica", 
             size = '400x300')
         
         # Eventos: patrón Observer ###########################
         self.btnCambiarPantallaGrafico = Event()
         self.btnCambiarPantallaMapa = Event()
 
-    
+        self.setup_ui()
+
     def setup_ui(self):
         # Frame Centrado #####################################
         self.frame_central = ttk.Frame(self)
@@ -59,4 +60,3 @@ if __name__ == "__main__":
     mediador_view.obtener_frame_view_actual()
     ventana.mainloop()
 
-    

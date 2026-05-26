@@ -45,11 +45,11 @@ class ViewGrafico(ViewBase):
       # Frame que contiene los CheckBtn[izq.] y el garfico[der.]
         self.frame3 = tk.Frame(self)
         self.frame3.grid(row=1, column=0, padx= 20, sticky="w")
-    
 
       # Elementos ###########################################
         self.label_busca = ttk.Label(self.frame2, text="Ciudad:")
         self.entry_busca = ttk.Entry(self.frame2, width=50)
+        self.entry_busca.focus_set()
         self.btn_busca = ttk.Button(self.frame2, text="Buscar", command=lambda: self.actualizar_lista_btn())
         self.btn_cambiar_a_inicio = ttk.Button(self.frame2, text="Inicio", command=lambda: self.cambiar_a_pantalla_inicio())
         self.espacio = ttk.Label(self.frame2, text=" ")

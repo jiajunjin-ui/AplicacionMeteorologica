@@ -5,6 +5,7 @@ import gc
 from view_grafico import ViewGrafico
 from view_mapa import ViewMapa
 from view_inicio import ViewInicio
+from view_mapa_variables import ViewMapaVariables
 
 class MediadorView:
     def __init__(self, ventana):
@@ -23,7 +24,7 @@ class MediadorView:
         self._registrar_view(ViewGrafico)
         self._registrar_view(ViewMapa)
         self._registrar_view(ViewInicio)
-
+        self._registrar_view(ViewMapaVariables)
 
     def _registrar_view(self, view):
         nombre_view = view.__name__

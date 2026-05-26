@@ -21,7 +21,8 @@ class SistemaPais:
             "format": "jsonv2",
             "addressdetails": 1,
             "limit": 5,
-            "accept-language": "es"
+            "accept-language": "es",
+            "featuretype": "country"
         }
 
         headers = {
