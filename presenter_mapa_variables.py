@@ -1,41 +1,47 @@
-import numpy as np
-from scipy.interpolate import griddata
-
 class PresenterMapaVariables:
     def __init__(self, view, model, mediador_presenter=None):
         self.vista = view
         self.modelo = model
         self.mediador = mediador_presenter
 
+        self.cache_geometria_fronteras = {}
+
         # Suscripción a las señales de la vista
-        self.vista.btnBuscar.add_listener(self.f_actualizar_mapa)
-    
-    def f_actualizar_mapa(self):
+        self.vista.btnBuscar.add_listener(self.f_actualizar_lista_paises)
+        self.vista.btnSelect.add_listener(self.f_actualizar_mapa)
+
+    def f_actualizar_lista_paises(self):
         try:
             text_in = self.vista.entrada()
-            pais_localidad = self.modelo.malla_clima_actual_pais(text_in)
-            
-            temps = pais_localidad.parametros.temperatura
-            lats = pais_localidad.lat
-            lons = pais_localidad.lon
-            lons_array = np.array(lons)
-            lats_array = np.array(lats)
-            coords = []
-            for i in range(len(lons)):
-                coords.append([lons[i], lats[i]])
-            
-             # Establecer límites #######################################################
-            lon_min, lon_max = lons_array.min(), lons_array.max()
-            lat_min, lat_max = lats_array.min(), lats_array.max()
-        
-             # Malla Interpoladora ######################################################
-            grid_x, grid_y = np.mgrid[lon_min:lon_max:180j,
-                                      lat_min:lat_max:180j]
-            grid_z = griddata(coords, temps, (grid_x, grid_y), method='cubic')
-            
-            self.vista.actualizar_mapa(lons_array, lats_array,
-                                       lon_min, lon_max,
-                                       lat_min, lat_max,  
-                                       grid_x, grid_y, grid_z)
+            list_posibles_paises = self.modelo.buscar_nombre_pais(text_in)
+            self.vista.mostrar_lista_paises(list_posibles_paises)
         except Exception as e:
             self.vista.mensaje('Error', str(e))
+
+
+    def f_actualizar_mapa(self, nombre_pais_select):
+           
+        try:
+            datos = self.modelo.generar_datos_mapa_var(nombre_pais_select)
+            (lons_array, lats_array,
+             lon_min, lon_max,
+             lat_min, lat_max,
+             lon_centro, lat_centro,
+             lon_exten, lat_exten,
+             grid_x, grid_y, grid_z,
+             nombre_pais, geometria_pais) = datos
+            
+            if geometria_pais is None:
+                self.vista.mensaje_info('Error al cargar fronteras',
+                                        f'Las fronteras de {nombre_pais} no se encuentran en la base de datos de Natural Earth')
+            self.vista.actualizar_mapa(lons_array, lats_array,
+                                       lon_min, lon_max,
+                                       lat_min, lat_max,
+                                       lon_centro, lat_centro,
+                                       lon_exten, lat_exten,  
+                                       grid_x, grid_y, grid_z,
+                                       nombre_pais, geometria_pais
+                                       )  
+        except Exception as e:
+            self.vista.mensaje('Error', str(e))
+    

@@ -104,10 +104,10 @@ class SolicitudOpenMeteo:
                 wind_speed_10m_actual_list.append(actual.Variables(3).Value())
                 date_actual = pd.to_datetime(actual.Time(), unit="s", utc=True)
 
-            temp_2m_actual_list[::-1]
-            hum_rel_actual_list[::-1]
-            prob_precip_actual_list[::-1]
-            wind_speed_10m_actual_list[::-1]
+            temp_2m_actual_list = temp_2m_actual_list[::-1]
+            hum_rel_actual_list = hum_rel_actual_list[::-1]
+            prob_precip_actual_list = prob_precip_actual_list[::-1]
+            wind_speed_10m_actual_list = wind_speed_10m_actual_list[::-1]
 
             return Parametro(
                 temperatura=temp_2m_actual_list,
