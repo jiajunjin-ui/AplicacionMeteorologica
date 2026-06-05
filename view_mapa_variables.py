@@ -1,7 +1,7 @@
 import tkinter as tk
 import tkinter.messagebox
 import matplotlib.pyplot as plt 
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import numpy as np
@@ -64,7 +64,7 @@ class ViewMapaVariables(ViewBase):
         """Método que crea la figura (fig), los ejes (ax) con preoyección y el canvas"""
         self.proyeccion = ccrs.PlateCarree()
         self.fig, self.ax = plt.subplots(figsize=(5.5, 5.5), dpi=100, subplot_kw={'projection': self.proyeccion})
-        self.fig.subplots_adjust(bottom=0.18, top=0.94, left=0.05, right=0.95)
+        self.fig.subplots_adjust(bottom=0.18, top=0.94, left=0.10, right=0.95)
 
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.columna_der)
         self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
@@ -99,9 +99,7 @@ class ViewMapaVariables(ViewBase):
 
     def actualizar_mapa(self, lons_array, lats_array, 
                         lon_min, lon_max, 
-                        lat_min, lat_max, 
-                        lon_centro, lat_centro,
-                        lon_exten, lat_exten,
+                        lat_min, lat_max,
                         grid_x, grid_y, grid_z,
                         nombre_pais, geometria_pais):  
         
@@ -111,18 +109,6 @@ class ViewMapaVariables(ViewBase):
         self.limpiar_mapa()
 
         # Fijar los límites establecidos ###########################################
-        ancho_columna_der = self.columna_der.winfo_width()
-        alto_columna_der = self.columna_der.winfo_height()
-
-        ratio_columna_der = ancho_columna_der / alto_columna_der
-        if lat_exten > 0:
-            ratio_mapa = lon_exten / lat_exten
-        else:
-            ratio_mapa = 1
-        
-        if ratio_mapa > ratio_columna_der:
-            new_lat_exte = lon_exten / ratio_columna_der
-
         self.ax.set_extent([lon_min, lon_max, lat_min, lat_max], crs=self.proyeccion)
         
         # Características geográficas: líneas de cosa, tierra, bordes ##############
@@ -187,8 +173,9 @@ class ViewMapaVariables(ViewBase):
         self.colorbar.set_label('Temperatura(ºC)', fontsize=9)
 
         self.ax.set_title(nombre_pais)
+        self.ax.set_aspect('equal', adjustable='box')
 
-        self.canvas.draw_idle()
+        self.canvas.draw()
         self.canvas.flush_events()
 
     def limpiar_mapa(self):

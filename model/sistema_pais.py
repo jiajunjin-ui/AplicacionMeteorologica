@@ -57,16 +57,6 @@ class SistemaPais:
                     nombre=nombre,
                     codigo_iso=codigo_iso
                 )
-        for ne_pais in self.base_datos_110m:
-            nombre = ne_pais.attributes.get('NAME_ES')
-            nombre_normalizado = self.normalizar_texto(nombre)
-            if nombre_normalizado.startswith(texto_normalizado):
-                if nombre not in self._paises_encontrados:
-                    codigo_iso = ne_pais.attributes.get('ISO_A2_EH')
-                    self._paises_encontrados[nombre] = Pais(
-                    nombre=nombre,
-                    codigo_iso=codigo_iso
-                )
 
         if not self._paises_encontrados:
             raise ValueError("No se encontro ningun pais.")
@@ -80,6 +70,7 @@ class SistemaPais:
         return self._paises_encontrados[nombre_pais]
     
     # Métodos especializados -----------------------------------
+    # Mapa de elementos discretos 
     def buscar_ciudades_principales(self, nombre_pais, cantidad):
         pais = self.seleccionar_pais(nombre_pais)
         pais.localidades = []
@@ -111,7 +102,9 @@ class SistemaPais:
 
         return pais
     
+    # Mapa de elementos continuos  
     def cargar_fronteras_pais(self, nombre_pais):
+        """Método para MapaVariables"""
         self.paises_pequenos = ["AD", "BB", "BH", "VA", "GD", "LI", "MV", 
                                 "MT", "MC", "NR", "PW", "KN", "SM", "SC", 
                                 "SG", "TV"]
@@ -150,8 +143,7 @@ class SistemaPais:
             pais.geometria = geometria_suavizada
             pais.fronteras = geometria_suavizada.bounds
         else:
-            pais.fronteras = None
-            pais.geometria = None
-            
+            raise ValueError("Error al generar la geometria del país")
+
         return pais 
             

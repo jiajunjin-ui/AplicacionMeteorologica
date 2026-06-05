@@ -4,8 +4,6 @@ class PresenterMapaVariables:
         self.modelo = model
         self.mediador = mediador_presenter
 
-        self.cache_geometria_fronteras = {}
-
         # Suscripción a las señales de la vista
         self.vista.btnBuscar.add_listener(self.f_actualizar_lista_paises)
         self.vista.btnSelect.add_listener(self.f_actualizar_mapa)
@@ -20,25 +18,21 @@ class PresenterMapaVariables:
 
 
     def f_actualizar_mapa(self, nombre_pais_select):
-           
         try:
             datos = self.modelo.generar_datos_mapa_var(nombre_pais_select)
             (lons_array, lats_array,
              lon_min, lon_max,
              lat_min, lat_max,
-             lon_centro, lat_centro,
-             lon_exten, lat_exten,
              grid_x, grid_y, grid_z,
              nombre_pais, geometria_pais) = datos
             
             if geometria_pais is None:
                 self.vista.mensaje_info('Error al cargar fronteras',
                                         f'Las fronteras de {nombre_pais} no se encuentran en la base de datos de Natural Earth')
+                return None
             self.vista.actualizar_mapa(lons_array, lats_array,
                                        lon_min, lon_max,
-                                       lat_min, lat_max,
-                                       lon_centro, lat_centro,
-                                       lon_exten, lat_exten,  
+                                       lat_min, lat_max, 
                                        grid_x, grid_y, grid_z,
                                        nombre_pais, geometria_pais
                                        )  

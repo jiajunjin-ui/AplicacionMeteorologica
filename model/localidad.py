@@ -26,7 +26,7 @@ class Localidad:
         self._nombre = None
         if nombre is not None:
             if forzar_set == True:
-                self._nombre = nombre  # Forzar el setter 
+                self._nombre = nombre  # Saltar validación
             else:
                 self.nombre = nombre 
         
