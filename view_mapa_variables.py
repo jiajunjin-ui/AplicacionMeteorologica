@@ -57,6 +57,7 @@ class ViewMapaVariables(ViewBase):
         # COLUMNA DERECHA ##################################
         self.columna_der= tk.Frame(self)
         self.columna_der.grid(row=0, column=1, sticky="nsew")
+        self.columna_der.grid_columnconfigure(1, weight=3)
         # Elementos y organización 
         self._inicializar_mapa()
 

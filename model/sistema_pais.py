@@ -51,7 +51,7 @@ class SistemaPais:
         for ne_pais in self.base_datos_10m:
             nombre = ne_pais.attributes.get('NAME_ES')
             nombre_normalizado = self.normalizar_texto(nombre)
-            if nombre_normalizado.startswith(texto_normalizado):
+            if texto_normalizado in nombre_normalizado:
                 codigo_iso = ne_pais.attributes.get('ISO_A2_EH')
                 self._paises_encontrados[nombre] = Pais(
                     nombre=nombre,

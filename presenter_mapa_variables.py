@@ -29,7 +29,7 @@ class PresenterMapaVariables:
             if geometria_pais is None:
                 self.vista.mensaje_info('Error al cargar fronteras',
                                         f'Las fronteras de {nombre_pais} no se encuentran en la base de datos de Natural Earth')
-                return None
+                return 
             self.vista.actualizar_mapa(lons_array, lats_array,
                                        lon_min, lon_max,
                                        lat_min, lat_max, 

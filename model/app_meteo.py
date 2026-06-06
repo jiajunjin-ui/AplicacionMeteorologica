@@ -11,7 +11,6 @@ class AppMeteo:
         self.buscador_paises = SistemaPais()
         self.servicio_clima = None
 
-
     def buscar_nombre_ciudad(self, text):
         return self.buscador.buscador_nombre_ciudad(text)
 
@@ -40,7 +39,7 @@ class AppMeteo:
     def buscar_nombre_pais(self, texto):
         return self.buscador_paises.buscador_nombre_pais(texto)
 
-    def consultar_clima_actual_pais(self, nombre_pais, cantidad=3):
+    def consultar_clima_actual_pais(self, nombre_pais, cantidad):
         pais = self.buscador_paises.buscar_ciudades_principales(nombre_pais, cantidad)
 
         for localidad in pais.localidades:
@@ -49,11 +48,14 @@ class AppMeteo:
             localidad.parametros = parametros
         return pais
     
+    # Métodos exclusivos de MapaVariables ------------------------------------------
     def cargar_fronteras_a_pais(self, nombre_pais):
+        """Método empleado para asignar los límites y la geometría del país a una instancia de la clase Pais"""
         pais_con_fronteras = self.buscador_paises.cargar_fronteras_pais(nombre_pais)
         return pais_con_fronteras
     
     def generar_malla_clima_actual_pais(self, nombre_pais, malla=5): 
+        """Método para generar una malla nxn con datos clímaticos que se guarda en una instancia de Localidad"""
         pais_con_fronteras = self.cargar_fronteras_a_pais(nombre_pais)
         nombre = pais_con_fronteras.nombre
         lon_min, lat_min, lon_max, lat_max = pais_con_fronteras.fronteras
@@ -83,6 +85,8 @@ class AppMeteo:
         return malla_pais_loc
     
     def generar_datos_mapa_var(self, nombre_pais):
+        """Método que proporciona los datos necesarios para graficar mapas de elementos continuos"""
+
         pais_con_fronteras = self.cargar_fronteras_a_pais(nombre_pais)
         nombre = pais_con_fronteras.nombre 
         fronteras = pais_con_fronteras.fronteras
