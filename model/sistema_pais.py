@@ -74,7 +74,7 @@ class SistemaPais:
     def buscar_ciudades_principales(self, nombre_pais, cantidad):
         pais = self.seleccionar_pais(nombre_pais)
         pais.localidades = []
-
+        
         ciudades = self.geo_cache.get_cities()
         ciudades_del_pais = []
 
@@ -104,7 +104,7 @@ class SistemaPais:
     
     # Mapa de elementos continuos  
     def cargar_fronteras_pais(self, nombre_pais):
-        """Método para MapaVariables"""
+        """Método que asigna los límites y la geometría del país a una instancia de la clase Pais"""
         self.paises_pequenos = ["AD", "BB", "BH", "VA", "GD", "LI", "MV", 
                                 "MT", "MC", "NR", "PW", "KN", "SM", "SC", 
                                 "SG", "TV"]

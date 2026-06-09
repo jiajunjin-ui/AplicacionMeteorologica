@@ -5,7 +5,6 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import numpy as np
-from scipy.interpolate import griddata
 
 from model import Event
 from view_base import ViewBase
@@ -20,9 +19,11 @@ class ViewMapaVariables(ViewBase):
         
         # Eventos: patrón Observer ############################
         self.btnBuscar = Event()
-        self.btnSelect = Event()
+        self.btnSelect_pais = Event()
+        self.btnSelect_var = Event()
 
         self.lista_btn = []
+        self.lista_rbtn = []
         
         # Referencias de elementos del mapa ###################
         self.colorbar = None
@@ -30,6 +31,8 @@ class ViewMapaVariables(ViewBase):
         self.fig = None 
         self.ax = None
         self.canvas = None 
+        self.cp = None
+        self.lineas = None
 
         self.setup_ui()
 
@@ -79,6 +82,7 @@ class ViewMapaVariables(ViewBase):
     
     def mostrar_lista_paises(self, lista):
         self.limpiar_lista_paises()
+        self.limpiar_lista_var()
         for n, nombre_pais in enumerate(lista):
             boton = tk.Button(
                 self.columna_izq,
@@ -87,10 +91,6 @@ class ViewMapaVariables(ViewBase):
             )
             boton.grid(row=n+3, column=0, pady=2)
             self.lista_btn.append(boton)
-    
-    def seleccionar_pais(self, nombre_pais):
-        self.btnSelect.emit(nombre_pais)
-        self.limpiar_lista_paises()
 
     def limpiar_lista_paises(self):
         """Método que borra la lista de botones."""
@@ -98,87 +98,125 @@ class ViewMapaVariables(ViewBase):
             boton.destroy()
         self.lista_btn.clear()
 
-    def actualizar_mapa(self, lons_array, lats_array, 
+    def seleccionar_pais(self, nombre_pais):
+        self.btnSelect_pais.emit(nombre_pais)
+        self.limpiar_lista_paises()
+    
+    # MÉTODOS DE GENERACIÓN DE MAPA -----------------------------------------------------
+
+    def generar_mapa(self, lons_array, lats_array, 
                         lon_min, lon_max, 
                         lat_min, lat_max,
-                        grid_x, grid_y, grid_z,
-                        nombre_pais, geometria_pais):  
+                        nombre_pais, geometria_pais,
+                        lista_variables):  
         
         if self.fig is None or self.ax is None:
             self._inicializar_mapa()
         
         self.limpiar_mapa()
-
-        # Fijar los límites establecidos ###########################################
+        
+        # Fijar los límites establecidos #################################
         self.ax.set_extent([lon_min, lon_max, lat_min, lat_max], crs=self.proyeccion)
         
-        # Características geográficas: líneas de cosa, tierra, bordes ##############
-        self.ax.add_feature(cfeature.COASTLINE.with_scale('10m'), edgecolor='black', linewidth=1.5)
-        self.ax.add_feature(cfeature.BORDERS.with_scale('10m'), linestyle=':', edgecolor='black')
-        self.ax.add_feature(cfeature.LAND.with_scale('10m'), facecolor='#f5f5f5')
-        self.ax.add_feature(cfeature.OCEAN.with_scale('10m'), facecolor="#3980d6", alpha=0.7)
-    
-        # Mapa de calor isotermas ##################################################
-        cp = self.ax.contourf(
-            grid_x, grid_y, grid_z, 
-            levels=15, 
-            cmap='RdYlBu_r',
-            alpha=0.6, 
-            transform=self.proyeccion
-            )
-        lineas = self.ax.contour(
-            grid_x, grid_y, grid_z, 
-            levels=10, 
-            colors='black',
-            linewidths=0.5, 
-            alpha=0.5,
-            transform=self.proyeccion
-            )
-    
-        self.ax.clabel(lineas, inline=True, fontsize=8.5, fmt='%.1f°C')
+        # Características geográficas: líneas de cosa, tierra, bordes #########
+        self.ax.add_feature(cfeature.COASTLINE.with_scale('10m'), edgecolor='black', linewidth=1.5, zorder=2)
+        self.ax.add_feature(cfeature.BORDERS.with_scale('10m'), linestyle=':', edgecolor='black', zorder=2)
+        self.ax.add_feature(cfeature.LAND.with_scale('10m'), facecolor='#f5f5f5', zorder=0)
+        self.ax.add_feature(cfeature.OCEAN.with_scale('10m'), facecolor="#115ab3", alpha=0.7, zorder=0)
         
-        # Puntos de control ########################################################
+        # Puntos de control ##############################################
         self.ax.scatter(
             lons_array, lats_array, 
             c='black', 
-            s=8, 
-            alpha=0.7, 
+            s=6, 
+            alpha=0.6, 
             transform=self.proyeccion,
-            zorder=5)
+            zorder=3)
         
-        # Contorno País ############################################################
+        # Contorno País ##################################################
         if geometria_pais is not None:
             self.ax.add_geometries(
                 [geometria_pais], self.proyeccion,
                 facecolor='none',
                 edgecolor='red',
-                linewidth=1
+                linewidth=1,
+                zorder=4
                 )
 
-        # Cuadricula de cooordenadas ###############################################
+        # Cuadricula de cooordenadas #####################################
         cuadricula = self.ax.gridlines(draw_labels=True, linestyle='--', alpha=0.5)
         cuadricula.top_labels = False
         cuadricula.right_labels = False
-        
-        # Colorbar #################################################################
-        if self.colorbar is not None:
-            try:
-                self.colorbar.remove()
-            except:
-                pass
 
-        self.cbar_ax = self.fig.add_axes([0.25, 0.09, 0.5, 0.03])
-        self.colorbar = self.fig.colorbar(cp, cax=self.cbar_ax, 
-                                          orientation='horizontal',
-                                          pad=0.04, shrink=0.7)
-        self.colorbar.set_label('Temperatura(ºC)', fontsize=9)
+        # Opciónes de mapa ###############################################
+        self.limpiar_lista_var()
+        self.seleccion = tk.IntVar()
+        self.seleccion.set(0)
+        for n, var in enumerate(lista_variables):
+            op = tk.Radiobutton(self.columna_izq, 
+                                text=var,
+                                variable=self.seleccion, 
+                                value=n, 
+                                command=lambda var=var: self.seleccionar_var(var))
+            op.grid(row=n+3, column=0, pady=2, sticky="w")
+            self.lista_rbtn.append(op)
 
+        self.btnSelect_var.emit('Temperatura')
+
+        # Título y formato de ejes #######################################
         self.ax.set_title(nombre_pais)
         self.ax.set_aspect('equal', adjustable='box')
 
         self.canvas.draw()
         self.canvas.flush_events()
 
+
+    def seleccionar_var(self, variable):
+        self.btnSelect_var.emit(variable)
+    
+    def limpiar_lista_var(self):
+        """Método que borra la lista de radiobutton."""
+        for rboton in self.lista_rbtn:
+            rboton.destroy()
+        self.lista_rbtn.clear()
+
+    def rellenar_mapa (self, grid_x, grid_y, grid_z, 
+                       colores, unidades, text_label,
+                       line_level):
+        self.limpiar_relleno()
+        # Mapa de elementos continuos ####################################
+        self.cp = self.ax.contourf(
+            grid_x, grid_y, grid_z, 
+            levels=15, 
+            cmap=colores,
+            alpha=0.7, 
+            transform=self.proyeccion,
+            zorder=1
+            )
+
+        self.lineas = self.ax.contour(
+            grid_x, grid_y, grid_z, 
+            levels=line_level, 
+            colors='black',
+            linewidths=0.5, 
+            alpha=0.7,
+            transform=self.proyeccion,
+            zorder=1
+            )
+    
+        self.ax.clabel(self.lineas, inline=True, fontsize=8.5, fmt=unidades)
+
+        # Colorbar #######################################################
+        self.cbar_ax = self.fig.add_axes([0.25, 0.09, 0.5, 0.03])
+        self.colorbar = self.fig.colorbar(self.cp, format='%.1f', cax=self.cbar_ax, 
+                                          orientation='horizontal',
+                                          pad=0.04, shrink=0.7)
+        self.colorbar.set_label(text_label, fontsize=8)
+
+        self.canvas.draw()
+        self.canvas.flush_events()
+
+     # MÉTODOS DE LIMPIEZA DE MAPA ------------------------------------------------------
     def limpiar_mapa(self):
         """Limpia el mapa eliminando colorbar y ejes"""
         if self.colorbar is not None:
@@ -197,7 +235,41 @@ class ViewMapaVariables(ViewBase):
 
         if self.ax is not None:
             self.ax.clear()
-    
+        
+        self.cp = None
+        self.lineas = None 
+
+    def limpiar_relleno(self):
+        """Limpiar el mapa eliminando colorbar y colores de relleno"""
+        if self.cp is not None:
+            try:
+                self.cp.remove()
+            except:
+                pass
+            self.cp = None
+        
+        if self.lineas is not None:
+            try:
+                self.lineas.remove()
+            except:
+                pass
+            self.lineas = None 
+
+        if self.colorbar is not None:
+            try:
+                self.colorbar.remove()
+            except:
+                pass
+            self.colorbar = None
+
+        if self.cbar_ax is not None:
+            try:
+                self.fig.delaxes(self.cbar_ax)
+            except:
+                pass
+            self.cbar_ax = None
+        
+
     def mensaje(self, prompt, txt):
         """Muestra error con messagebox"""
         tk.messagebox.showerror(prompt, txt)
