@@ -137,7 +137,7 @@ class SistemaPais:
             if codigo_pais in self.paises_pequenos:
                 geometria_suavizada = simplify(geometria_frontera, tolerance=0.00004, preserve_topology=True)
             else:
-                geometria_suavizada = simplify(geometria_frontera, tolerance=0.003, preserve_topology=True)
+                geometria_suavizada = simplify(geometria_frontera, tolerance=0.0001, preserve_topology=True)
             
             self.cache_geometria_fronteras[codigo_pais] = geometria_suavizada
             pais.geometria = geometria_suavizada

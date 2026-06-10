@@ -89,9 +89,21 @@ class AppMeteo:
 
         malla_temp = np.array(parametros.temperatura)
         parametros.temperatura = malla_temp
+
+        malla_hum = np.array(parametros.humedad)
+        parametros.humedad = malla_hum
+
+        malla_dir_viento = np.array(parametros.direccion_viento)
+        parametros.direccion_viento = malla_dir_viento
+
+        malla_raf_viento = np.array(parametros.rafaga_viento)
+        parametros.rafaga_viento = malla_raf_viento
+
+
         malla_pais_loc.parametros = parametros
      
         return malla_pais_loc
+        
     
     def generar_datos_mapa_var(self, nombre_pais):
         """Método que proporciona los datos necesarios para graficar mapas de elementos continuos"""
@@ -110,6 +122,11 @@ class AppMeteo:
         # Variables Clímaticas ######################################
         temperaturas = pais_localidad.parametros.temperatura
         humedades = pais_localidad.parametros.humedad
+
+        raf_vientos = pais_localidad.parametros.rafaga_viento
+        rad = np.deg2rad(pais_localidad.parametros.direccion_viento)
+        u = -3 * np.sin(rad)
+        v = -3 * np.cos(rad)
 
         # Límites ###################################################
         lon_min, lat_min, lon_max, lat_max = fronteras
@@ -132,12 +149,14 @@ class AppMeteo:
                                   lat_min:lat_max:800j]
         grid_z_temp = griddata(coords, temperaturas, (grid_x, grid_y), method='cubic')
         grid_z_hum = griddata(coords, humedades, (grid_x, grid_y), method='cubic')
+        grid_z_raf_viento = griddata(coords, raf_vientos, (grid_x, grid_y), method='cubic')
 
 
         return(lons_array, lats_array,
                lon_min, lon_max,
                lat_min, lat_max,
                grid_x, grid_y, 
-               grid_z_temp, grid_z_hum,
+               grid_z_temp, grid_z_hum, 
+               grid_z_raf_viento, u, v, 
                nombre, geometria)
 

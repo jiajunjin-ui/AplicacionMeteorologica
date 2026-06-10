@@ -30,9 +30,11 @@ class ViewMapaVariables(ViewBase):
         self.cbar_ax = None
         self.fig = None 
         self.ax = None
-        self.canvas = None 
+        self.canvas = None
+
         self.cp = None
         self.lineas = None
+        self.flechas = None
 
         self.setup_ui()
 
@@ -148,6 +150,9 @@ class ViewMapaVariables(ViewBase):
         cuadricula.top_labels = False
         cuadricula.right_labels = False
 
+        cuadricula.xlabel_style = {'size': 10}
+        cuadricula.ylabel_style = {'size': 10}
+
         # Opciónes de mapa ###############################################
         self.limpiar_lista_var()
         self.seleccion = tk.IntVar()
@@ -182,41 +187,51 @@ class ViewMapaVariables(ViewBase):
 
     def rellenar_mapa (self, grid_x, grid_y, grid_z, 
                        colores, unidades, text_label,
-                       line_level):
+                       cp_levels,
+                       hay_lineas, line_levels,
+                       u, v, lons_array, lats_array):
+        
         self.limpiar_relleno()
-        # Mapa de elementos continuos ####################################
+        # Elementos continuos ############################################
         self.cp = self.ax.contourf(
             grid_x, grid_y, grid_z, 
-            levels=15, 
+            levels=cp_levels, 
             cmap=colores,
             alpha=0.7, 
             transform=self.proyeccion,
             zorder=1
             )
+        if hay_lineas:
+            self.lineas = self.ax.contour(
+                grid_x, grid_y, grid_z, 
+                levels=line_levels, 
+                colors='black',
+                linewidths=0.5, 
+                alpha=0.7,
+                transform=self.proyeccion,
+                zorder=5
+                )
+            self.ax.clabel(self.lineas, inline=True, fontsize=8.5, fmt=unidades)
 
-        self.lineas = self.ax.contour(
-            grid_x, grid_y, grid_z, 
-            levels=line_level, 
-            colors='black',
-            linewidths=0.5, 
-            alpha=0.7,
-            transform=self.proyeccion,
-            zorder=1
-            )
-    
-        self.ax.clabel(self.lineas, inline=True, fontsize=8.5, fmt=unidades)
+        # Elementos discretos ############################################
+        if u is not None and v is not None:
+            self.flechas = self.ax.quiver(lons_array, lats_array, u, v,
+                                          color='white',
+                                          scale=95,
+                                          width=0.003,
+                                          transform=self.proyeccion)
 
         # Colorbar #######################################################
-        self.cbar_ax = self.fig.add_axes([0.25, 0.09, 0.5, 0.03])
+        self.cbar_ax = self.fig.add_axes([0.25, 0.10, 0.5, 0.03])
         self.colorbar = self.fig.colorbar(self.cp, format='%.1f', cax=self.cbar_ax, 
                                           orientation='horizontal',
                                           pad=0.04, shrink=0.7)
-        self.colorbar.set_label(text_label, fontsize=8)
+        self.colorbar.set_label(text_label, fontsize=9.5)
 
         self.canvas.draw()
         self.canvas.flush_events()
 
-     # MÉTODOS DE LIMPIEZA DE MAPA ------------------------------------------------------
+    # MÉTODOS DE LIMPIEZA DE MAPA ------------------------------------------------------
     def limpiar_mapa(self):
         """Limpia el mapa eliminando colorbar y ejes"""
         if self.colorbar is not None:
@@ -254,6 +269,13 @@ class ViewMapaVariables(ViewBase):
             except:
                 pass
             self.lineas = None 
+        
+        if self.flechas is not None:
+            try:
+                self.flechas.remove()
+            except:
+                pass 
+            self.flechas = None
 
         if self.colorbar is not None:
             try:
@@ -275,7 +297,8 @@ class ViewMapaVariables(ViewBase):
         tk.messagebox.showerror(prompt, txt)
     
     def mensaje_info(self, prompt, txt):
-        """Informa procedimientos precindibles que no se han podios ejecutar"""
+        """Informa de procedimientos prescindibles 
+        que no se han podios ejecutar"""
         tk.messagebox.showinfo(prompt, txt)
 
 

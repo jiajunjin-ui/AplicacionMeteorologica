@@ -1,3 +1,7 @@
+import matplotlib.pyplot as plt 
+import matplotlib.colors as mcolors
+import numpy as np
+
 class PresenterMapaVariables:
     def __init__(self, view, model, mediador_presenter=None):
         self.vista = view
@@ -26,7 +30,8 @@ class PresenterMapaVariables:
              lon_min, lon_max,
              lat_min, lat_max,
              grid_x, grid_y, 
-             grid_z_temp, grid_z_hum,
+             grid_z_temp, grid_z_hum, 
+             grid_z_raf_viento, u, v,
              nombre_pais, geometria_pais) = datos
             self.dic_datos = {
                 'lons_array': lons_array,
@@ -34,7 +39,8 @@ class PresenterMapaVariables:
                 'lon_min': lon_min, 'lon_max': lon_max,
                 'lat_min': lat_min, 'lat_max': lat_max,
                 'grid_x': grid_x, 'grid_y': grid_y, 
-                'grid_z_temp': grid_z_temp, 'grid_z_hum': grid_z_hum,
+                'grid_z_temp': grid_z_temp, 'grid_z_hum': grid_z_hum, 
+                'grid_z_raf_viento': grid_z_raf_viento, 'u': u, 'v': v,
                 'nombre_pais': nombre_pais, 'geometria_pais': geometria_pais
             }
         except Exception as e:
@@ -57,7 +63,7 @@ class PresenterMapaVariables:
             geometria_pais = self.dic_datos['geometria_pais']
             nombre_pais = self.dic_datos['nombre_pais']
 
-            lista_variables = ['Temperatura', 'Humedad Relativa']
+            lista_variables = ['Temperatura', 'Humedad Relativa', 'Vientos']
 
             if geometria_pais is None:
                 self.vista.mensaje_info('Error al cargar fronteras',
@@ -74,27 +80,56 @@ class PresenterMapaVariables:
     
     def f_rellenar_mapa(self, var_select):
         try:
+            lons_array = self.dic_datos['lons_array']
+            lats_array = self.dic_datos['lats_array']
+        
             grid_x = self.dic_datos['grid_x']
             grid_y = self.dic_datos['grid_y']
 
             grid_z_temp = self.dic_datos['grid_z_temp']
             grid_z_hum = self.dic_datos['grid_z_hum']
+            grid_z_viento = self.dic_datos['grid_z_raf_viento']
+            u, v = None, None 
+
             if var_select == 'Temperatura':
                 grid_z = grid_z_temp
                 colores = 'RdYlBu_r'
                 unidades = '%.1f°C'
-                line_level = 10
+                cp_levels = 15
+                hay_lineas = True
+                line_levels = 10
                 text_label = 'Temperatura(ºC)'
+
             elif var_select == 'Humedad Relativa':
                 grid_z = grid_z_hum
                 colores = 'YlGnBu_r'
                 unidades = '%.1f%%'
-                line_level = 15
+                cp_levels = 15
+                hay_lineas = True
+                line_levels = 15
                 text_label = 'Humedad Relativa(%)'
 
+            elif var_select == 'Vientos':
+                colores_rgb = plt.colormaps['turbo'](np.linspace(0, 1, 256))
+                colores_hsv = mcolors.rgb_to_hsv(colores_rgb[:, :3])
+                colores_hsv[:, 2] = colores_hsv[:, 2] * 0.7
+
+                color_viento = mcolors.ListedColormap(mcolors.hsv_to_rgb(colores_hsv))
+                grid_z = grid_z_viento
+                colores = color_viento
+                unidades = '%.1fkm/h'
+                cp_levels = 18
+                hay_lineas = False
+                line_levels = 0
+                text_label = 'Rachas Viento(km/h)' 
+                u = self.dic_datos['u']
+                v = self.dic_datos['v']
+
             self.vista.rellenar_mapa(grid_x, grid_y, grid_z, 
-                                     colores, unidades, text_label, 
-                                     line_level)
+                                     colores, unidades, text_label,
+                                     cp_levels, 
+                                     hay_lineas, line_levels,
+                                     u, v, lons_array, lats_array)
             
         except Exception as e:
             self.vista.mensaje('Error', str(e))
