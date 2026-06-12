@@ -185,16 +185,17 @@ class ViewMapaVariables(ViewBase):
             rboton.destroy()
         self.lista_rbtn.clear()
 
-    def rellenar_mapa (self, grid_x, grid_y, grid_z, 
+    def rellenar_mapa (self, grid_x_c, grid_y_c, grid_z, 
                        colores, unidades, text_label,
                        cp_levels,
                        hay_lineas, line_levels,
-                       u, v, lons_array, lats_array):
+                       grid_z_velx_viento, grid_z_vely_viento,
+                       grid_x_d, grid_y_d):
         
         self.limpiar_relleno()
         # Elementos continuos ############################################
         self.cp = self.ax.contourf(
-            grid_x, grid_y, grid_z, 
+            grid_x_c, grid_y_c, grid_z, 
             levels=cp_levels, 
             cmap=colores,
             alpha=0.7, 
@@ -203,7 +204,7 @@ class ViewMapaVariables(ViewBase):
             )
         if hay_lineas:
             self.lineas = self.ax.contour(
-                grid_x, grid_y, grid_z, 
+                grid_x_c, grid_y_c, grid_z, 
                 levels=line_levels, 
                 colors='black',
                 linewidths=0.5, 
@@ -214,8 +215,9 @@ class ViewMapaVariables(ViewBase):
             self.ax.clabel(self.lineas, inline=True, fontsize=8.5, fmt=unidades)
 
         # Elementos discretos ############################################
-        if u is not None and v is not None:
-            self.flechas = self.ax.quiver(lons_array, lats_array, u, v,
+        if grid_z_velx_viento is not None and grid_z_vely_viento is not None:
+            self.flechas = self.ax.quiver(grid_x_d, grid_y_d, 
+                                          grid_z_velx_viento, grid_z_vely_viento,
                                           color='white',
                                           scale=95,
                                           width=0.003,

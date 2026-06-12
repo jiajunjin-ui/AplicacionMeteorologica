@@ -87,6 +87,7 @@ class SolicitudOpenMeteo:
                 "is_day"
                 ],
             "timezone": "auto",
+            "format": "flatbuffers"
             }
     
         responses = self.openmeteo.weather_api(self.url_openmeteo, params=params)

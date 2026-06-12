@@ -29,18 +29,22 @@ class PresenterMapaVariables:
             (lons_array, lats_array,
              lon_min, lon_max,
              lat_min, lat_max,
-             grid_x, grid_y, 
+             grid_x_c, grid_y_c, 
+             grid_x_d, grid_y_d,
              grid_z_temp, grid_z_hum, 
-             grid_z_raf_viento, u, v,
+             grid_z_raf_viento,
+             grid_z_velx_viento, grid_z_vely_viento,
              nombre_pais, geometria_pais) = datos
             self.dic_datos = {
                 'lons_array': lons_array,
                 'lats_array': lats_array,
                 'lon_min': lon_min, 'lon_max': lon_max,
                 'lat_min': lat_min, 'lat_max': lat_max,
-                'grid_x': grid_x, 'grid_y': grid_y, 
+                'grid_x_c': grid_x_c, 'grid_y_c': grid_y_c,
+                'grid_x_d': grid_x_d, 'grid_y_d': grid_y_d, 
                 'grid_z_temp': grid_z_temp, 'grid_z_hum': grid_z_hum, 
-                'grid_z_raf_viento': grid_z_raf_viento, 'u': u, 'v': v,
+                'grid_z_raf_viento': grid_z_raf_viento, 
+                'grid_z_velx_viento': grid_z_velx_viento, 'grid_z_vely_viento': grid_z_vely_viento,
                 'nombre_pais': nombre_pais, 'geometria_pais': geometria_pais
             }
         except Exception as e:
@@ -80,16 +84,16 @@ class PresenterMapaVariables:
     
     def f_rellenar_mapa(self, var_select):
         try:
-            lons_array = self.dic_datos['lons_array']
-            lats_array = self.dic_datos['lats_array']
+            grid_x_d = self.dic_datos['grid_x_d']
+            grid_y_d = self.dic_datos['grid_y_d']
         
-            grid_x = self.dic_datos['grid_x']
-            grid_y = self.dic_datos['grid_y']
+            grid_x_c = self.dic_datos['grid_x_c']
+            grid_y_c = self.dic_datos['grid_y_c']
 
             grid_z_temp = self.dic_datos['grid_z_temp']
             grid_z_hum = self.dic_datos['grid_z_hum']
             grid_z_viento = self.dic_datos['grid_z_raf_viento']
-            u, v = None, None 
+            grid_z_velx_viento, grid_z_vely_viento = None, None 
 
             if var_select == 'Temperatura':
                 grid_z = grid_z_temp
@@ -122,14 +126,15 @@ class PresenterMapaVariables:
                 hay_lineas = False
                 line_levels = 0
                 text_label = 'Rachas Viento(km/h)' 
-                u = self.dic_datos['u']
-                v = self.dic_datos['v']
+                grid_z_velx_viento = self.dic_datos['grid_z_velx_viento']
+                grid_z_vely_viento = self.dic_datos['grid_z_vely_viento']
 
-            self.vista.rellenar_mapa(grid_x, grid_y, grid_z, 
+            self.vista.rellenar_mapa(grid_x_c, grid_y_c, grid_z, 
                                      colores, unidades, text_label,
                                      cp_levels, 
                                      hay_lineas, line_levels,
-                                     u, v, lons_array, lats_array)
+                                     grid_z_velx_viento, grid_z_vely_viento, 
+                                     grid_x_d, grid_y_d)
             
         except Exception as e:
             self.vista.mensaje('Error', str(e))
