@@ -1,21 +1,24 @@
-import requests
 import geonamescache
-import os
 import unicodedata
+from shapely import simplify
+from shapely.geometry import MultiPolygon
+import cartopy.io.shapereader as shpreader
 
 from .pais import Pais
 from .localidad import Localidad
 
 
 class SistemaPais:
-    """Clase encargada de buscar paises y sus ciudades principales."""
+    """Clase encargada de buscar países y sus ciudades principales."""
 
     def __init__(self):
-        self.url_buscar_pais = "https://nominatim.openstreetmap.org/search"
         self.geo_cache = geonamescache.GeonamesCache()
         self._paises_encontrados = {}
-        self._catalogo_paises = self._crear_catalogo_paises()
+        self.cache_geometria_fronteras = {}
+        self.base_datos_10m = self._cargar_db_paises("10m")
+        self.base_datos_110m = self._cargar_db_paises("110m")
 
+    # Métodos principales --------------------------------------
     def normalizar_texto(self, texto):
         texto = texto.strip().lower()
         texto = unicodedata.normalize("NFD", texto)
@@ -25,25 +28,13 @@ class SistemaPais:
         )
         return texto
 
-    def _crear_catalogo_paises(self):
-        catalogo = {}
-        ruta_paises = os.path.join(
-            os.path.dirname(os.path.dirname(__file__)),
-            "datos",
-            "paises_es.txt"
-        )
+    def _cargar_db_paises(self, resolucion):
+        shp_archivo = shpreader.natural_earth(resolution=resolucion,
+                                              category='cultural',
+                                              name='admin_0_countries')
+        lector = shpreader.Reader(shp_archivo)
 
-        with open(ruta_paises, encoding="utf-8") as fichero:
-            for linea in fichero:
-                linea = linea.strip()
-
-                if not linea:
-                    continue
-
-                codigo_iso, nombre = linea.split("|", maxsplit=1)
-                catalogo[nombre] = Pais(nombre=nombre, codigo_iso=codigo_iso)
-
-        return catalogo
+        return list(lector.records())
 
     def buscador_nombre_pais(self, texto):
         """Busca paises cuyo nombre empieza por el texto introducido."""
@@ -56,13 +47,14 @@ class SistemaPais:
         texto_normalizado = self.normalizar_texto(texto)
         self._paises_encontrados = {}
 
-        for nombre, pais in self._catalogo_paises.items():
+        for ne_pais in self.base_datos_10m:
+            nombre = ne_pais.attributes.get('NAME_ES')
             nombre_normalizado = self.normalizar_texto(nombre)
-
-            if nombre_normalizado.startswith(texto_normalizado):
+            if texto_normalizado in nombre_normalizado:
+                codigo_iso = ne_pais.attributes.get('ISO_A2_EH')
                 self._paises_encontrados[nombre] = Pais(
-                    nombre=pais.nombre,
-                    codigo_iso=pais.codigo_iso
+                    nombre=nombre,
+                    codigo_iso=codigo_iso
                 )
 
         if not self._paises_encontrados:
@@ -72,10 +64,8 @@ class SistemaPais:
 
     def seleccionar_pais(self, nombre_pais):
         """Devuelve el pais seleccionado de la lista generada."""
-
         if nombre_pais not in self._paises_encontrados:
             raise KeyError("Seleccione un pais de la lista generada.")
-
         return self._paises_encontrados[nombre_pais]
 
     def buscar_pais(self, nombre_pais):

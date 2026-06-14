@@ -1,21 +1,19 @@
 import tkinter as tk
 from model import AppMeteo
-from view_grafico import ViewGrafico
-from presenter_grafico import PresenterGrafico
-from view_mapa import ViewMapa
-from presenter_mapa import PresenterMapa
-from view_ranking import ViewRanking
-from presenter_ranking import PresenterRanking
+from mediador_view import MediadorView
+from mediador_presenter import MediadorPresenter
 
 class main():
     ventana = tk.Tk()
+    ventana.resizable(False, False)
+
     modelo = AppMeteo()
-    #vista = ViewGrafico(ventana)
-    #presenter = PresenterGrafico(vista, modelo)
-    #vista = ViewMapa(ventana)
-    #presenter = PresenterMapa(vista, modelo)
-    vista = ViewRanking(ventana)
-    presenter = PresenterRanking(vista, modelo)
+
+    mediador_view = MediadorView(ventana)
+    mediador_presenter = MediadorPresenter(mediador_view, modelo)
+
+    mediador_presenter.cambiar_presenter('PresenterInicio')
+    mediador_presenter.obtener_presenter_actual()
     ventana.mainloop()
  
 if __name__ == "__main__":
