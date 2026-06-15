@@ -3,22 +3,19 @@ import tkinter.messagebox
 from tkinter import ttk
 
 from model import Event
+from view_base import ViewBase
 
 
-class ViewRanking:
-    def __init__(self, ventana):
-        self.ventana = ventana
-        self.ventana.title("Ranking")
-        self.ventana.geometry("960x560")
-
+class ViewRanking(ViewBase):
+    def __init__(self, parent, mediador_view):
         self.lista_btn_paises = []
 
         self.btnBuscarPais = Event()
         self.btnSelectPais = Event()
         self.btnGenerarRanking = Event()
         self.opciones_ranking = [
-            ("mas_calurosas", "M\u00e1s calurosas"),
-            ("mas_frias", "M\u00e1s fr\u00edas"),
+            ("mas_calurosas", "Más calurosas"),
+            ("mas_frias", "Más frías"),
             ("mas_viento", "Mas viento"),
             ("mas_humedad", "Mas humedad"),
         ]
@@ -26,33 +23,37 @@ class ViewRanking:
             etiqueta: codigo for codigo, etiqueta in self.opciones_ranking
         }
 
-        self.setup_ui()
+        super().__init__(
+            parent,
+            mediador_view,
+            titulo="Ranking",
+            size="960x560")
 
     def setup_ui(self):
         """VENTANA PRINCIPAL TIENE DOS COLUMNAS: IZQUIERDA (CONTROLES) - DERECHA (RANKING)"""
-        self.ventana.grid_columnconfigure(0, weight=1)
-        self.ventana.grid_columnconfigure(1, weight=3)
-        self.ventana.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=3)
+        self.grid_rowconfigure(0, weight=1)
 
         # COLUMNA IZQUIERDA
-        self.columna_izq = tk.Frame(self.ventana, padx=10, pady=10)
+        self.columna_izq = tk.Frame(self, padx=10, pady=10)
         self.columna_izq.grid(row=0, column=0, sticky="nsew")
 
-        tk.Label(self.columna_izq, text="Introduce un pa\u00eds:").grid(row=0, column=0, sticky="w")
+        tk.Label(self.columna_izq, text="Introduce un país:").grid(row=0, column=0, sticky="w")
 
         self.entrada_pais = tk.Entry(self.columna_izq, width=25)
         self.entrada_pais.grid(row=1, column=0, sticky="ew")
 
         self.btn_buscar_pais = tk.Button(
             self.columna_izq,
-            text="Buscar pa\u00eds",
+            text="Buscar país",
             command=self.actualizar_lista_paises
         )
         self.btn_buscar_pais.grid(row=2, column=0, pady=5, sticky="ew")
 
         self.label_pais_seleccionado = tk.Label(
             self.columna_izq,
-            text="Pa\u00eds seleccionado: ninguno"
+            text="País seleccionado: ninguno"
         )
         self.label_pais_seleccionado.grid(row=3, column=0, sticky="w", pady=(10, 0))
 
@@ -82,7 +83,7 @@ class ViewRanking:
         self.columna_izq.grid_columnconfigure(0, weight=1)
 
         # COLUMNA DERECHA
-        self.columna_der = tk.Frame(self.ventana, padx=10, pady=10)
+        self.columna_der = tk.Frame(self, padx=10, pady=10)
         self.columna_der.grid(row=0, column=1, sticky="nsew")
         self.columna_der.grid_rowconfigure(1, weight=1)
         self.columna_der.grid_columnconfigure(0, weight=1)
@@ -192,5 +193,5 @@ class ViewRanking:
 
 if __name__ == "__main__":
     ventana = tk.Tk()
-    vista = ViewRanking(ventana)
+    vista = ViewRanking(ventana, None)
     ventana.mainloop()

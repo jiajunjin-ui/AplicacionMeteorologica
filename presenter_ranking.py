@@ -1,9 +1,10 @@
 class PresenterRanking:
     """Presenter de la pestana Ranking."""
 
-    def __init__(self, view, model):
+    def __init__(self, view, model, mediador_presenter=None):
         self.vista = view
         self.modelo = model
+        self.mediador = mediador_presenter
         self.pais_seleccionado = None
 
         self.vista.btnBuscarPais.add_listener(self.f_buscar_pais)
