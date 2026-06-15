@@ -1,7 +1,5 @@
 import geonamescache
 import unicodedata
-from shapely import simplify
-from shapely.geometry import MultiPolygon
 import cartopy.io.shapereader as shpreader
 
 from .pais import Pais
@@ -68,77 +66,8 @@ class SistemaPais:
             raise KeyError("Seleccione un pais de la lista generada.")
         return self._paises_encontrados[nombre_pais]
 
-    def buscar_pais(self, nombre_pais):
-        nombre_pais = nombre_pais.strip()
-
-        if not nombre_pais:
-            raise ValueError("Introduce un pais.")
-
-        if nombre_pais in self._paises_encontrados:
-            return self._paises_encontrados[nombre_pais]
-
-        if nombre_pais in self._catalogo_paises:
-            return self._catalogo_paises[nombre_pais]
-
-        nombre_normalizado = self.normalizar_texto(nombre_pais)
-
-        for nombre, pais in self._catalogo_paises.items():
-            if self.normalizar_texto(nombre) == nombre_normalizado:
-                return Pais(nombre=pais.nombre, codigo_iso=pais.codigo_iso)
-
-        params = {
-            "q": nombre_pais,
-            "format": "jsonv2",
-            "addressdetails": 1,
-            "featureType": "country",
-            "limit": 5,
-            "accept-language": "es"
-        }
-
-        headers = {
-            "User-Agent": "AplicacionMeteorologica/1.0"
-        }
-
-        respuesta = requests.get(
-            self.url_buscar_pais,
-            params=params,
-            headers=headers
-        ).json()
-
-        if not respuesta:
-            raise ValueError("No se encontro el pais introducido.")
-
-        primer_pais = None
-
-        for resultado in respuesta:
-            if resultado.get("addresstype") != "country":
-                continue
-
-            direccion = resultado.get("address", {})
-            nombre = direccion.get("country")
-            codigo_iso = direccion.get("country_code")
-
-            if nombre is None or codigo_iso is None:
-                continue
-
-            pais = Pais(
-                nombre=nombre,
-                codigo_iso=codigo_iso.upper()
-            )
-
-            if primer_pais is None:
-                primer_pais = pais
-
-            if self.normalizar_texto(nombre) == nombre_normalizado:
-                return pais
-
-        if primer_pais is not None:
-            return primer_pais
-
-        raise ValueError("Introduce un pais valido.")
-
     def buscar_ciudades_principales(self, nombre_pais, cantidad):
-        pais = self.buscar_pais(nombre_pais)
+        pais = self.seleccionar_pais(nombre_pais)
         pais.localidades = []
 
         ciudades = self.geo_cache.get_cities()
