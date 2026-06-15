@@ -2,14 +2,17 @@ from .sistema_localizacion import SistemaLocalizacion
 from .sistema_pais import SistemaPais
 from .solicitud_openmeteo import SolicitudOpenMeteo
 from .localidad import Localidad
+
 import numpy as np 
-from scipy.interpolate import griddata
+from scipy.interpolate import RegularGridInterpolator
+from pyproj import Transformer
 
 class AppMeteo:
     def __init__(self):
         self.buscador = SistemaLocalizacion()
         self.buscador_paises = SistemaPais()
         self.servicio_clima = None
+        self.transformador = Transformer.from_crs("EPSG:4326", "EPSG:3857", always_xy=True)
 
     def buscar_nombre_ciudad(self, text):
         """Método que devuelve una lista con los nombres de las ciudades 
@@ -61,28 +64,29 @@ class AppMeteo:
         pais_con_fronteras = self.cargar_fronteras_a_pais(nombre_pais)
         nombre = pais_con_fronteras.nombre
         lon_min, lat_min, lon_max, lat_max = pais_con_fronteras.fronteras
-        lat_exten = lat_max - lat_min
-        lon_exten = lon_max - lon_min
-        margen_lat = (lat_exten) * 0.04
+        lon_exten = abs(lon_max - lon_min)
+        lat_exten = abs(lat_max - lat_min)
         margen_lon = (lon_exten) * 0.04
+        margen_lat = (lat_exten) * 0.04
+
+        if lat_min - margen_lat < -90.0 or lat_max + margen_lat > 90.0:
+            margen_lat = 0.0
+        elif lon_min - margen_lon < -180.0 or lon_max + margen_lon > 180.0:
+            margen_lon = 0.0
 
         if lat_exten < 2.0 and lon_exten < 2.0:
             malla = 5
         else:
             malla = 6
-
+        
         lats_lines = np.linspace(lat_min - margen_lat , lat_max + margen_lat, malla)
         lons_lines = np.linspace(lon_min - margen_lon, lon_max + margen_lon, malla)
 
-        lista_lons_round = []
-        lista_lats_round = [] 
-        lista_lons = np.tile(lons_lines, len(lats_lines)).tolist()
-        lista_lats = np.repeat(lats_lines, len(lons_lines)).tolist()
-        
-        for lon in lista_lons:
-            lista_lons_round.append(round(lon, 3))
-        for lat in lista_lats:
-            lista_lats_round.append(round(lat, 3))        
+        lista_lons = np.tile(lons_lines, malla)
+        lista_lats = np.repeat(lats_lines, malla)
+
+        lista_lons_round = np.round(lista_lons, 4).tolist() 
+        lista_lats_round = np.round(lista_lats, 4).tolist()
 
 
         malla_pais_loc = Localidad(
@@ -96,20 +100,19 @@ class AppMeteo:
         parametros = self.servicio_clima.obtener_clima_actual()
 
         malla_temp = np.array(parametros.temperatura)
-        parametros.temperatura = malla_temp
+        parametros.temperatura = malla_temp.reshape(malla, malla)
 
         malla_hum = np.array(parametros.humedad)
-        parametros.humedad = malla_hum
-
-        malla_dir_viento = np.array(parametros.direccion_viento)
-        parametros.direccion_viento = malla_dir_viento
+        parametros.humedad = malla_hum.reshape(malla, malla)
 
         malla_raf_viento = np.array(parametros.rafaga_viento)
-        parametros.rafaga_viento = malla_raf_viento
+        parametros.rafaga_viento = malla_raf_viento.reshape(malla, malla)
+
+        malla_dir_viento = np.array(parametros.direccion_viento)
+        parametros.direccion_viento = malla_dir_viento.reshape(malla, malla)
 
 
         malla_pais_loc.parametros = parametros
-     
         return malla_pais_loc
           
         
@@ -125,7 +128,6 @@ class AppMeteo:
         lats = pais_localidad.lat
         lons_array = np.array(lons)
         lats_array = np.array(lats)
-        coords = np.column_stack((lons_array, lats_array))
       
         # Variables Clímaticas ######################################
         temperaturas = pais_localidad.parametros.temperatura
@@ -137,12 +139,17 @@ class AppMeteo:
         lon_min, lat_min, lon_max, lat_max = fronteras
 
         # Cálculo la extensión del mapa #############################
-        lon_exten = lon_max - lon_min
-        lat_exten = lat_max - lat_min
+        lon_exten = abs(lon_max - lon_min)
+        lat_exten = abs(lat_max - lat_min)
 
         # Añadir margenes ###########################################
         margen_lon = lon_exten * 0.04
         margen_lat = lat_exten * 0.04
+
+        if lat_min - margen_lat < -90.0 or lat_max + margen_lat > 90.0:
+            margen_lat = 0.0
+        elif lon_min - margen_lon < -180.0 or lon_max + margen_lon > 180.0:
+            margen_lon = 0.0
 
         lon_min = lon_min - margen_lon
         lon_max = lon_max + margen_lon
@@ -150,22 +157,47 @@ class AppMeteo:
         lat_max = lat_max + margen_lat
 
         # Malla Interpoladora #######################################
-        # Elementos continuos 
-        grid_x_c, grid_y_c = np.mgrid[lon_min:lon_max:800j,
-                                  lat_min:lat_max:800j]
-        grid_z_temp = griddata(coords, temperaturas, (grid_x_c, grid_y_c), method='cubic')
-        grid_z_hum = griddata(coords, humedades, (grid_x_c, grid_y_c), method='cubic')
-        grid_z_raf_viento = griddata(coords, raf_vientos, (grid_x_c, grid_y_c), method='cubic')
+        lons_array_unico = np.unique(lons_array)
+        lats_array_unico = np.unique(lats_array)
+
+
+        # Elementos continuos
+        interp_temp = RegularGridInterpolator((lats_array_unico, lons_array_unico), temperaturas, 
+                                              bounds_error=False, fill_value=None, method='cubic')
+        interp_hum = RegularGridInterpolator((lats_array_unico, lons_array_unico), humedades, 
+                                              bounds_error=False, fill_value=None, method='cubic')
+        interp_raf_viento = RegularGridInterpolator((lats_array_unico, lons_array_unico), raf_vientos, 
+                                                     bounds_error=False, fill_value=None, method='cubic')
+
+        grid_y_c, grid_x_c = np.mgrid[lat_min:lat_max:600j, 
+                                      lon_min:lon_max:600j]
+        puntos_interp_c = np.dstack((grid_y_c, grid_x_c))
+
+        grid_z_temp = interp_temp(puntos_interp_c)
+        grid_z_hum = interp_hum(puntos_interp_c)
+        grid_z_raf_viento = interp_raf_viento(puntos_interp_c)
 
         # Elementos discretos 
-        grid_x_d, grid_y_d = np.mgrid[lon_min:lon_max:8j,
-                                      lat_min:lat_max:8j]
+        interp_dir_viento = RegularGridInterpolator((lats_array_unico, lons_array_unico), dir_vientos, 
+                                                     bounds_error=False, fill_value=None, method='cubic')
+
+        grid_y_d, grid_x_d = np.mgrid[lat_min:lat_max:8j,
+                                      lon_min:lon_max:8j]
+        puntos_interp_d = np.dstack((grid_y_d, grid_x_d))
        
-        grid_z_dir_viento = griddata(coords, dir_vientos, (grid_x_d, grid_y_d), method='cubic')
-        grid_z_velx_viento = -3 * np.sin(grid_z_dir_viento)
-        grid_z_vely_viento = -3 * np.cos(grid_z_dir_viento)
+        grid_z_dir_viento = interp_dir_viento(puntos_interp_d)
+        grid_z_velx_viento = 3 * np.sin(grid_z_dir_viento) 
+        grid_z_vely_viento = 3 * np.cos(grid_z_dir_viento)
 
+        # Transformación de PlaneCaree a Mercator 
+        lons_array, lats_array = self.transformar_coordenadas(lons_array, lats_array)
+        lon_min, lat_min = self.transformar_coordenadas(lon_min, lat_min)
+        lon_max, lat_max = self.transformar_coordenadas(lon_max, lat_max)
+        
+        grid_x_c, grid_y_c = self.transformar_coordenadas(grid_x_c, grid_y_c)
+        grid_x_d, grid_y_d = self.transformar_coordenadas(grid_x_d, grid_y_d)
 
+        
         return(lons_array, lats_array,
                lon_min, lon_max,
                lat_min, lat_max,
@@ -175,4 +207,7 @@ class AppMeteo:
                grid_z_raf_viento, 
                grid_z_velx_viento, grid_z_vely_viento, 
                nombre, geometria)
-
+    
+    def transformar_coordenadas(self, lon, lat):
+        lon_transform, lat_transform = self.transformador.transform(lon, lat)
+        return lon_transform, lat_transform

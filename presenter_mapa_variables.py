@@ -49,21 +49,21 @@ class PresenterMapaVariables:
             }
         except Exception as e:
             self.vista.mensaje('Error', str(e))
-
+        
+        
     def f_generar_mapa(self, nombre_pais_select):
         try:
             self.obtener_datos(nombre_pais_select)
 
             lons_array = self.dic_datos['lons_array']
             lats_array = self.dic_datos['lats_array']
-
+            
             lon_min = self.dic_datos['lon_min']
             lon_max = self.dic_datos['lon_max']
 
             lat_min = self.dic_datos['lat_min']
             lat_max = self.dic_datos['lat_max']
-
-
+            
             geometria_pais = self.dic_datos['geometria_pais']
             nombre_pais = self.dic_datos['nombre_pais']
 
@@ -84,11 +84,11 @@ class PresenterMapaVariables:
     
     def f_rellenar_mapa(self, var_select):
         try:
-            grid_x_d = self.dic_datos['grid_x_d']
-            grid_y_d = self.dic_datos['grid_y_d']
-        
             grid_x_c = self.dic_datos['grid_x_c']
             grid_y_c = self.dic_datos['grid_y_c']
+
+            grid_x_d = self.dic_datos['grid_x_d']
+            grid_y_d = self.dic_datos['grid_y_d']
 
             grid_z_temp = self.dic_datos['grid_z_temp']
             grid_z_hum = self.dic_datos['grid_z_hum']
@@ -106,7 +106,7 @@ class PresenterMapaVariables:
 
             elif var_select == 'Humedad Relativa':
                 grid_z = grid_z_hum
-                colores = 'YlGnBu_r'
+                colores = 'YlGnBu'
                 unidades = '%.1f%%'
                 cp_levels = 15
                 hay_lineas = True

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
-import numpy as np
+from cartopy.feature import ShapelyFeature
 
 from model import Event
 from view_base import ViewBase
@@ -68,7 +68,7 @@ class ViewMapaVariables(ViewBase):
 
     def _inicializar_mapa(self):
         """Método que crea la figura (fig), los ejes (ax) con preoyección y el canvas"""
-        self.proyeccion = ccrs.PlateCarree()
+        self.proyeccion = ccrs.epsg(3857)
         self.fig, self.ax = plt.subplots(figsize=(5.5, 5.5), dpi=100, subplot_kw={'projection': self.proyeccion})
         self.fig.subplots_adjust(bottom=0.18, top=0.94, left=0.10, right=0.95)
 
@@ -137,13 +137,14 @@ class ViewMapaVariables(ViewBase):
         
         # Contorno País ##################################################
         if geometria_pais is not None:
-            self.ax.add_geometries(
-                [geometria_pais], self.proyeccion,
-                facecolor='none',
-                edgecolor='red',
-                linewidth=1,
-                zorder=4
-                )
+            self.ax.add_feature(ShapelyFeature(
+                geometria_pais, 
+                crs=self.proyeccion,
+                 facecolor='none',
+                 edgecolor='red',
+                 linewidth=1,
+                 zorder=4
+                 ))
 
         # Cuadricula de cooordenadas #####################################
         cuadricula = self.ax.gridlines(draw_labels=True, linestyle='--', alpha=0.5)
@@ -221,7 +222,8 @@ class ViewMapaVariables(ViewBase):
                                           color='white',
                                           scale=95,
                                           width=0.003,
-                                          transform=self.proyeccion)
+                                          transform=self.proyeccion,
+                                          zorder=5)
 
         # Colorbar #######################################################
         self.cbar_ax = self.fig.add_axes([0.25, 0.10, 0.5, 0.03])

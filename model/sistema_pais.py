@@ -3,6 +3,7 @@ import unicodedata
 from shapely import simplify
 from shapely.geometry import MultiPolygon
 import cartopy.io.shapereader as shpreader
+import cartopy.crs as ccrs
 
 from .pais import Pais
 from .localidad import Localidad
@@ -113,9 +114,9 @@ class SistemaPais:
         codigo_pais = pais.codigo_iso
 
         if codigo_pais in self.cache_geometria_fronteras:
-            geometria = self.cache_geometria_fronteras[codigo_pais]
+            geometria, bordes = self.cache_geometria_fronteras[codigo_pais]
             pais.geometria = geometria
-            pais.fronteras = geometria.bounds
+            pais.fronteras = bordes
             return pais
             
         if codigo_pais in self.paises_pequenos:
@@ -123,27 +124,31 @@ class SistemaPais:
         else:
             db = self.base_datos_110m
         
-        geometria_frontera = None
+        geometria_pais = None
         for ne_pais in db:
             if ne_pais.attributes.get('ISO_A2_EH') == codigo_pais:
                 geometria_completa = ne_pais.geometry
                 if isinstance(geometria_completa, MultiPolygon):
-                    geometria_frontera = max(geometria_completa.geoms, key=lambda p: p.area)
+                    geometria_pais = max(geometria_completa.geoms, key=lambda p: p.area)
                 else: 
-                    geometria_frontera = geometria_completa
+                    geometria_pais = geometria_completa
                 break
 
-        if geometria_frontera is not None:
+        if geometria_pais is not None:
+            crs_original = ccrs.PlateCarree()
+            crs_tranform = ccrs.epsg(3857)
+            geom_pais_transform = crs_tranform.project_geometry(geometria_pais, crs_original)
+
             if codigo_pais in self.paises_pequenos:
-                geometria_suavizada = simplify(geometria_frontera, tolerance=0.00004, preserve_topology=True)
+                geometria_suavizada = simplify(geom_pais_transform, tolerance=0.00004, preserve_topology=True)
             else:
-                geometria_suavizada = simplify(geometria_frontera, tolerance=0.0001, preserve_topology=True)
+                geometria_suavizada = simplify(geom_pais_transform, tolerance=0.0001, preserve_topology=True)
             
-            self.cache_geometria_fronteras[codigo_pais] = geometria_suavizada
+            self.cache_geometria_fronteras[codigo_pais] = (geometria_suavizada, geometria_pais.bounds)
             pais.geometria = geometria_suavizada
-            pais.fronteras = geometria_suavizada.bounds
+            pais.fronteras = geometria_pais.bounds
         else:
             raise ValueError("Error al generar la geometria del país")
-
+        
         return pais 
             
