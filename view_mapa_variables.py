@@ -213,14 +213,14 @@ class ViewMapaVariables(ViewBase):
                 transform=self.proyeccion,
                 zorder=5
                 )
-            self.ax.clabel(self.lineas, inline=True, fontsize=8.5, fmt=unidades)
+            self.ax.clabel(self.lineas, levels=self.lineas.levels[::2], inline=True, fontsize=8.5, fmt=unidades)
 
         # Elementos discretos ############################################
         if grid_z_velx_viento is not None and grid_z_vely_viento is not None:
             self.flechas = self.ax.quiver(grid_x_d, grid_y_d, 
                                           grid_z_velx_viento, grid_z_vely_viento,
                                           color='white',
-                                          scale=95,
+                                          scale=90,
                                           width=0.003,
                                           transform=self.proyeccion,
                                           zorder=5)

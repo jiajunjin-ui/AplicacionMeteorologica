@@ -18,8 +18,8 @@ class SistemaPais:
         self.cache_geometria_fronteras = {}
         self.base_datos_10m = self._cargar_db_paises("10m")
         self.base_datos_110m = self._cargar_db_paises("110m")
+        self._generar_list_paises_pequeños()
         
-    
     # Métodos principales --------------------------------------
     def normalizar_texto(self, texto):
         texto = texto.strip().lower()
@@ -33,7 +33,7 @@ class SistemaPais:
     def _cargar_db_paises(self, resolucion):
         shp_archivo = shpreader.natural_earth(resolution=resolucion,
                                               category='cultural',
-                                              name='admin_0_countries')
+                                              name='admin_0_map_units')
         lector = shpreader.Reader(shp_archivo)
 
         return list(lector.records())
@@ -70,6 +70,21 @@ class SistemaPais:
             raise KeyError("Seleccione un pais de la lista generada.")
         return self._paises_encontrados[nombre_pais]
     
+    def _generar_list_paises_pequeños(self):
+        list_cod_vis_baja_resolucion = []
+        list_cod_vis_alta_resolucion = []
+        for ne_region in self.base_datos_10m:
+            codigo_iso = ne_region.attributes.get('ISO_A2_EH')
+            if codigo_iso and codigo_iso not in ['-99', ' ']:
+                min_zoom = ne_region.attributes.get('min_zoom', 0.0)
+                scalerank = ne_region.attributes.get('scalerank', 0)
+                if min_zoom < 6.0 and scalerank < 6:
+                    list_cod_vis_baja_resolucion.append(codigo_iso)
+                else:
+                    list_cod_vis_alta_resolucion.append(codigo_iso)
+        self.paises_pequenos = sorted(list(set(list_cod_vis_baja_resolucion) - set(list_cod_vis_alta_resolucion)))
+
+
     # Métodos especializados -----------------------------------
     # Mapa de elementos discretos 
     def buscar_ciudades_principales(self, nombre_pais, cantidad):
@@ -103,12 +118,12 @@ class SistemaPais:
 
         return pais
     
-    # Mapa de elementos continuos  
+    # Mapa de elementos continuos 
     def cargar_fronteras_pais(self, nombre_pais):
         """Método que asigna los límites y la geometría del país a una instancia de la clase Pais"""
-        self.paises_pequenos = ["AD", "BB", "BH", "VA", "GD", "LI", "MV", 
-                                "MT", "MC", "NR", "PW", "KN", "SM", "SC", 
-                                "SG", "TV"]
+        # self.paises_pequenos = ["AD", "BB", "BH", "VA", "GD", "LI", "MV", 
+        #                         "MT", "MC", "NR", "PW", "KN", "SM", "SC", 
+        #                         "SG", "TV"]
         
         pais = self.seleccionar_pais(nombre_pais)
         codigo_pais = pais.codigo_iso
@@ -118,7 +133,7 @@ class SistemaPais:
             pais.geometria = geometria
             pais.fronteras = bordes
             return pais
-            
+
         if codigo_pais in self.paises_pequenos:
             db = self.base_datos_10m
         else:

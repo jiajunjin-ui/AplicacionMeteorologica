@@ -94,35 +94,35 @@ class PresenterMapaVariables:
             grid_z_hum = self.dic_datos['grid_z_hum']
             grid_z_viento = self.dic_datos['grid_z_raf_viento']
             grid_z_velx_viento, grid_z_vely_viento = None, None 
-
+ 
             if var_select == 'Temperatura':
                 grid_z = grid_z_temp
                 colores = 'RdYlBu_r'
                 unidades = '%.1f°C'
-                cp_levels = 15
+                cp_levels = np.linspace(np.min(grid_z), np.max(grid_z), 15)
                 hay_lineas = True
-                line_levels = 10
+                line_levels = np.linspace(np.min(grid_z), np.max(grid_z), 10)
                 text_label = 'Temperatura(ºC)'
 
             elif var_select == 'Humedad Relativa':
                 grid_z = grid_z_hum
                 colores = 'YlGnBu'
                 unidades = '%.1f%%'
-                cp_levels = 15
+                cp_levels = np.linspace(np.min(grid_z), np.max(grid_z), 15)
                 hay_lineas = True
-                line_levels = 15
+                line_levels = np.linspace(np.min(grid_z), np.max(grid_z), 15)
                 text_label = 'Humedad Relativa(%)'
 
             elif var_select == 'Vientos':
                 colores_rgb = plt.colormaps['turbo'](np.linspace(0, 1, 256))
                 colores_hsv = mcolors.rgb_to_hsv(colores_rgb[:, :3])
                 colores_hsv[:, 2] = colores_hsv[:, 2] * 0.7
-
                 color_viento = mcolors.ListedColormap(mcolors.hsv_to_rgb(colores_hsv))
+
                 grid_z = grid_z_viento
                 colores = color_viento
                 unidades = '%.1fkm/h'
-                cp_levels = 18
+                cp_levels = np.linspace(np.min(grid_z), np.max(grid_z), 16)
                 hay_lineas = False
                 line_levels = 0
                 text_label = 'Rachas Viento(km/h)' 

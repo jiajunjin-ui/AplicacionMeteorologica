@@ -176,6 +176,7 @@ class AppMeteo:
         grid_z_temp = interp_temp(puntos_interp_c)
         grid_z_hum = interp_hum(puntos_interp_c)
         grid_z_raf_viento = interp_raf_viento(puntos_interp_c)
+        grid_z_raf_viento = np.clip(grid_z_raf_viento, a_min=0.0, a_max=None)
 
         # Elementos discretos 
         interp_dir_viento = RegularGridInterpolator((lats_array_unico, lons_array_unico), dir_vientos, 
@@ -189,7 +190,7 @@ class AppMeteo:
         grid_z_velx_viento = 3 * np.sin(grid_z_dir_viento) 
         grid_z_vely_viento = 3 * np.cos(grid_z_dir_viento)
 
-        # Transformación de PlaneCaree a Mercator 
+        # Transformación de PlaneCarree a Mercator ##################
         lons_array, lats_array = self.transformar_coordenadas(lons_array, lats_array)
         lon_min, lat_min = self.transformar_coordenadas(lon_min, lat_min)
         lon_max, lat_max = self.transformar_coordenadas(lon_max, lat_max)
