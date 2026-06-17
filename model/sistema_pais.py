@@ -121,10 +121,6 @@ class SistemaPais:
     # Mapa de elementos continuos 
     def cargar_fronteras_pais(self, nombre_pais):
         """Método que asigna los límites y la geometría del país a una instancia de la clase Pais"""
-        # self.paises_pequenos = ["AD", "BB", "BH", "VA", "GD", "LI", "MV", 
-        #                         "MT", "MC", "NR", "PW", "KN", "SM", "SC", 
-        #                         "SG", "TV"]
-        
         pais = self.seleccionar_pais(nombre_pais)
         codigo_pais = pais.codigo_iso
 
@@ -155,9 +151,9 @@ class SistemaPais:
             geom_pais_transform = crs_tranform.project_geometry(geometria_pais, crs_original)
 
             if codigo_pais in self.paises_pequenos:
-                geometria_suavizada = simplify(geom_pais_transform, tolerance=0.00004, preserve_topology=True)
+                geometria_suavizada = simplify(geom_pais_transform, tolerance=0.05, preserve_topology=True)
             else:
-                geometria_suavizada = simplify(geom_pais_transform, tolerance=0.0001, preserve_topology=True)
+                geometria_suavizada = simplify(geom_pais_transform, tolerance=0.10, preserve_topology=True)
             
             self.cache_geometria_fronteras[codigo_pais] = (geometria_suavizada, geometria_pais.bounds)
             pais.geometria = geometria_suavizada

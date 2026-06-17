@@ -30,20 +30,20 @@ class ViewInicio(ViewBase):
         self.frame_central.rowconfigure(4, weight=1)
 
         # Elementos ##########################################
-        self.btn_ir_a_grafico = tk.Button(self.frame_central, 
+        btn_ir_a_grafico = tk.Button(self.frame_central, 
                                            text='Previsión por ciudad',
                                            width=20, 
                                            font=("Arial", 11),
                                            command=lambda: self.cambiar_a_pantalla_grafico()
                                            )
-        self.btn_ir_a_mapa_dis = tk.Button(self.frame_central, 
+        btn_ir_a_mapa_dis = tk.Button(self.frame_central, 
                                         text='Mapas elementos discretos', 
                                         width=20,
                                         font=("Arial", 11),
                                         command=lambda: self.cambiar_a_pantalla_mapa_dis()
                                         )
         
-        self.btn_ir_a_mapa_cont = tk.Button(self.frame_central, 
+        btn_ir_a_mapa_cont = tk.Button(self.frame_central, 
                                         text='Mapas elementos continuos', 
                                         width=20,
                                         font=("Arial", 11),
@@ -51,9 +51,9 @@ class ViewInicio(ViewBase):
                                         )
 
         # Organización #######################################
-        self.btn_ir_a_grafico.grid(row=1, column=0, columnspan=4, padx= 10, pady=5)
-        self.btn_ir_a_mapa_dis.grid(row=2, column=0, columnspan=4, padx=10, pady=5)
-        self.btn_ir_a_mapa_cont.grid(row=3, column=0, columnspan=4, padx=10, pady=5)
+        btn_ir_a_grafico.grid(row=1, column=0, columnspan=4, padx= 10, pady=5)
+        btn_ir_a_mapa_dis.grid(row=2, column=0, columnspan=4, padx=10, pady=5)
+        btn_ir_a_mapa_cont.grid(row=3, column=0, columnspan=4, padx=10, pady=5)
 
     def cambiar_a_pantalla_grafico(self):
         self.btnCambiarPantallaGrafico.emit()

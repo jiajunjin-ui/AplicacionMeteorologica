@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 import tkinter.messagebox
 import matplotlib.pyplot as plt 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -21,6 +22,7 @@ class ViewMapaVariables(ViewBase):
         self.btnBuscar = Event()
         self.btnSelect_pais = Event()
         self.btnSelect_var = Event()
+        self.btnCambiarPantallaInicio = Event()
 
         self.lista_btn = []
         self.lista_rbtn = []
@@ -44,6 +46,7 @@ class ViewMapaVariables(ViewBase):
         self.grid_columnconfigure(1, weight=3)
         self.grid_rowconfigure(0, weight=1)
 
+
         # COLUMNA IZQUIERDA ################################
         self.columna_izq = tk.Frame(self, width=250, padx=10, pady=10) 
         self.columna_izq.grid(row=0, column=0, sticky="nsew")
@@ -52,11 +55,13 @@ class ViewMapaVariables(ViewBase):
         # Elementos 
         self.label_instruccion = tk.Label(self.columna_izq, text="Introduzca País")
         self.entry_pais = tk.Entry(self.columna_izq, width=25)
-        btn_buscar_pais = tk.Button(self.columna_izq, text="Mostrar país", command=lambda: self.actualizar_lista_paises())
+        btn_buscar_pais = ttk.Button(self.columna_izq, text="Mostrar país", command=lambda: self.actualizar_lista_paises())
+        btn_ir_a_inicio = ttk.Button(self.columna_izq, width=10 , text="Inicio", command=lambda: self.cambiar_a_pantalla_inicio())
         # Organización
-        self.label_instruccion.grid(row=0, column=0, sticky="w")
-        self.entry_pais.grid(row=1, column=0, sticky="ew")
-        btn_buscar_pais.grid(row=2, column=0, pady=5, sticky="ew")
+        self.label_instruccion.grid(row=1, column=0, sticky="w")
+        self.entry_pais.grid(row=2, column=0, sticky="ew")
+        btn_buscar_pais.grid(row=3, column=0, pady=5, sticky="ew")
+        btn_ir_a_inicio.grid(row=0, column=0, sticky="w")
 
 
         # COLUMNA DERECHA ##################################
@@ -71,9 +76,11 @@ class ViewMapaVariables(ViewBase):
         self.proyeccion = ccrs.epsg(3857)
         self.fig, self.ax = plt.subplots(figsize=(5.5, 5.5), dpi=100, subplot_kw={'projection': self.proyeccion})
         self.fig.subplots_adjust(bottom=0.18, top=0.94, left=0.10, right=0.95)
+        self.ax.grid(True)
 
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.columna_der)
         self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+        self.canvas.draw_idle()
 
     def entrada(self):
         """Método que toma el texto de Entry."""
@@ -86,12 +93,13 @@ class ViewMapaVariables(ViewBase):
         self.limpiar_lista_paises()
         self.limpiar_lista_var()
         for n, nombre_pais in enumerate(lista):
-            boton = tk.Button(
+            boton = ttk.Button(
                 self.columna_izq,
+                width=15,
                 text=nombre_pais,
                 command=lambda nombre_pais=nombre_pais: self.seleccionar_pais(nombre_pais)
             )
-            boton.grid(row=n+3, column=0, pady=2)
+            boton.grid(row=n+4, column=0, pady=5)
             self.lista_btn.append(boton)
 
     def limpiar_lista_paises(self):
@@ -111,9 +119,6 @@ class ViewMapaVariables(ViewBase):
                         lat_min, lat_max,
                         nombre_pais, geometria_pais,
                         lista_variables):  
-        
-        if self.fig is None or self.ax is None:
-            self._inicializar_mapa()
         
         self.limpiar_mapa()
         
@@ -164,7 +169,7 @@ class ViewMapaVariables(ViewBase):
                                 variable=self.seleccion, 
                                 value=n, 
                                 command=lambda var=var: self.seleccionar_var(var))
-            op.grid(row=n+3, column=0, pady=2, sticky="w")
+            op.grid(row=n+4, column=0, pady=2, sticky="w")
             self.lista_rbtn.append(op)
 
         self.btnSelect_var.emit('Temperatura')
@@ -173,7 +178,7 @@ class ViewMapaVariables(ViewBase):
         self.ax.set_title(nombre_pais)
         self.ax.set_aspect('equal', adjustable='box')
 
-        self.canvas.draw()
+        self.canvas.draw_idle()
         self.canvas.flush_events()
 
 
@@ -234,29 +239,24 @@ class ViewMapaVariables(ViewBase):
 
         self.canvas.draw()
         self.canvas.flush_events()
+        self.canvas.draw_idle()
 
     # MÉTODOS DE LIMPIEZA DE MAPA ------------------------------------------------------
     def limpiar_mapa(self):
-        """Limpia el mapa eliminando colorbar y ejes"""
-        if self.colorbar is not None:
-            try:
-                self.colorbar.remove()
-            except:
-                pass
-            self.colorbar = None
-        
-        if self.cbar_ax is not None:
-            try:
-                self.fig.delaxes(self.cbar_ax)
-            except:
-                pass
-            self.cbar_ax = None
+        """Limpia el mapa"""
+        self.fig.clear()
 
-        if self.ax is not None:
-            self.ax.clear()
-        
+        self.ax = self.fig.add_subplot(111, projection=self.proyeccion)
+        self.fig.subplots_adjust(bottom=0.18, top=0.94, left=0.10, right=0.95)
+        self.ax.grid(True, linestyle='--', alpha=0.5)
+
+        self.colorbar = None
+        self.cbar_ax = None
         self.cp = None
-        self.lineas = None 
+        self.lineas = None
+        self.flechas = None
+
+        self.canvas.draw_idle()
 
     def limpiar_relleno(self):
         """Limpiar el mapa eliminando colorbar y colores de relleno"""
@@ -294,7 +294,15 @@ class ViewMapaVariables(ViewBase):
             except:
                 pass
             self.cbar_ax = None
-        
+
+    def limpiar_mapa_cambio_pantalla(self):
+        "Limpieza total del mapa y del texto introducido"
+        self.limpiar_relleno()
+        self.limpiar_mapa()
+        self.entry_pais.delete(0, tk.END)
+
+    def cambiar_a_pantalla_inicio(self):
+        self.btnCambiarPantallaInicio.emit()
 
     def mensaje(self, prompt, txt):
         """Muestra error con messagebox"""
@@ -304,7 +312,6 @@ class ViewMapaVariables(ViewBase):
         """Informa de procedimientos prescindibles 
         que no se han podios ejecutar"""
         tk.messagebox.showinfo(prompt, txt)
-
 
 if __name__ == "__main__":
     from mediador_view import MediadorView

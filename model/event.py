@@ -12,3 +12,7 @@ class Event:
         """Llama a todas las funciones suscritas, una por una."""
         for funcion in self.suscriptores:
             funcion(*args)
+    
+    def clear_listeners(self):
+        """Elimina todos las funciones de la lista de suscriptores"""
+        self.suscriptores.clear()

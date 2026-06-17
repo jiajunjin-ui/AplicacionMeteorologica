@@ -85,8 +85,8 @@ class AppMeteo:
         lista_lons = np.tile(lons_lines, malla)
         lista_lats = np.repeat(lats_lines, malla)
 
-        lista_lons_round = np.round(lista_lons, 4).tolist() 
-        lista_lats_round = np.round(lista_lats, 4).tolist()
+        lista_lons_round = np.round(lista_lons, 6).tolist() 
+        lista_lats_round = np.round(lista_lats, 6).tolist()
 
 
         malla_pais_loc = Localidad(

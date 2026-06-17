@@ -8,10 +8,17 @@ class PresenterMapaVariables:
         self.modelo = model
         self.mediador = mediador_presenter
 
+        # Limpiar listeners suscritos previamente 
+        self.vista.btnBuscar.clear_listeners()
+        self.vista.btnSelect_pais.clear_listeners()
+        self.vista.btnSelect_var.clear_listeners()
+        self.vista.btnCambiarPantallaInicio.clear_listeners()
+
         # Suscripción a las señales de la vista
         self.vista.btnBuscar.add_listener(self.f_actualizar_lista_paises)
         self.vista.btnSelect_pais.add_listener(self.f_generar_mapa)
         self.vista.btnSelect_var.add_listener(self.f_rellenar_mapa)
+        self.vista.btnCambiarPantallaInicio.add_listener(self.f_cambiar_a_pantalla_inicio)
 
         self.dic_datos = {}
 
@@ -73,6 +80,7 @@ class PresenterMapaVariables:
                 self.vista.mensaje_info('Error al cargar fronteras',
                                         f'Las fronteras de {nombre_pais} no se encuentran en la base de datos de Natural Earth')
                 return 
+
             self.vista.generar_mapa(lons_array, lats_array,
                                     lon_min, lon_max,
                                     lat_min, lat_max,
@@ -99,18 +107,30 @@ class PresenterMapaVariables:
                 grid_z = grid_z_temp
                 colores = 'RdYlBu_r'
                 unidades = '%.1f°C'
-                cp_levels = np.linspace(np.min(grid_z), np.max(grid_z), 15)
+                min_z = np.min(grid_z)
+                max_z = np.max(grid_z)
+                cp_levels = np.linspace(min_z, max_z, 15)
                 hay_lineas = True
-                line_levels = np.linspace(np.min(grid_z), np.max(grid_z), 10)
+                line_levels = np.linspace(min_z, max_z, 10)
                 text_label = 'Temperatura(ºC)'
 
             elif var_select == 'Humedad Relativa':
                 grid_z = grid_z_hum
                 colores = 'YlGnBu'
                 unidades = '%.1f%%'
-                cp_levels = np.linspace(np.min(grid_z), np.max(grid_z), 15)
-                hay_lineas = True
-                line_levels = np.linspace(np.min(grid_z), np.max(grid_z), 15)
+                min_z = np.min(grid_z)
+                max_z = np.max(grid_z)
+                if np.isclose(min_z, max_z):
+                    min_z -= 0.1
+                    max_z += 0.1
+                    div_cp = 2
+                    div_lineas = 2
+                else:
+                    div_cp = 16  
+                    div_lineas = 16 
+                cp_levels = np.linspace(min_z, max_z, div_cp)
+                hay_lineas = True      
+                line_levels = np.linspace(min_z, max_z, div_lineas)
                 text_label = 'Humedad Relativa(%)'
 
             elif var_select == 'Vientos':
@@ -122,9 +142,17 @@ class PresenterMapaVariables:
                 grid_z = grid_z_viento
                 colores = color_viento
                 unidades = '%.1fkm/h'
-                cp_levels = np.linspace(np.min(grid_z), np.max(grid_z), 16)
+                min_z = np.min(grid_z)
+                max_z = np.max(grid_z)
+                if np.isclose(min_z, max_z):
+                    min_z -= 0.1
+                    max_z += 0.1  
+                    div_cp = 2 
+                else:
+                    div_cp = 16    
+                cp_levels = np.linspace(min_z, max_z, div_cp)
                 hay_lineas = False
-                line_levels = 0
+                line_levels = 1
                 text_label = 'Rachas Viento(km/h)' 
                 grid_z_velx_viento = self.dic_datos['grid_z_velx_viento']
                 grid_z_vely_viento = self.dic_datos['grid_z_vely_viento']
@@ -139,6 +167,15 @@ class PresenterMapaVariables:
         except Exception as e:
             self.vista.mensaje('Error', str(e))
     
+    def f_cambiar_a_pantalla_inicio(self):
+        """Cambia a la pantalla de inicio"""
+        try:
+            self.vista.limpiar_mapa_cambio_pantalla()
+            self.vista.limpiar_lista_var()
+            self.mediador.cambiar_presenter('PresenterInicio')
+            self.mediador.obtener_presenter_actual()
+        except Exception as e:
+            self.vista.mensaje('Error', str(e))
         
 
     
