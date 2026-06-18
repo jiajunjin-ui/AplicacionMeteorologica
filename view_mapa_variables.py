@@ -53,7 +53,7 @@ class ViewMapaVariables(ViewBase):
         self.columna_izq.grid_columnconfigure(0, weight=1)
         # Contenedor btn países 
         self.frame_paises = tk.Frame(self.columna_izq)
-        self.frame_paises.grid(row=4, column=0, sticky="ew")
+        self.frame_paises.grid(row=5, column=0, sticky="ew")
         self.frame_paises.grid_columnconfigure(0, weight=1)
         # Contenedor var clímaticas 
         self.frame_var = tk.Frame(self.columna_izq, padx=5, pady=5)
@@ -133,7 +133,7 @@ class ViewMapaVariables(ViewBase):
         self.limpiar_lista_paises()
     
     def mostrar_selector_var(self):
-        self.frame_var.grid(row=5, column=0, pady=15, sticky="ew")
+        self.frame_var.grid(row=4, column=0, pady=15, sticky="ew")
 
     def ocultar_selector_var(self):
         self.frame_var.grid_forget()

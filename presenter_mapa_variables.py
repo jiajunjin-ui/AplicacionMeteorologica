@@ -173,7 +173,6 @@ class PresenterMapaVariables:
         """Cambia a la pantalla de inicio"""
         try:
             self.vista.limpiar_mapa_cambio_pantalla()
-            self.vista.limpiar_lista_var()
             self.mediador.cambiar_presenter('PresenterInicio')
             self.mediador.obtener_presenter_actual()
         except Exception as e:
