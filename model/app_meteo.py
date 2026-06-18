@@ -118,11 +118,14 @@ class AppMeteo:
         
     def generar_datos_mapa_var(self, nombre_pais):
         """Método que proporciona los datos necesarios para graficar mapas de elementos continuos"""
+        paises_pequenos = self.buscador_paises.paises_pequenos
+
         pais_con_fronteras = self.cargar_fronteras_a_pais(nombre_pais)
         nombre = pais_con_fronteras.nombre 
+        codigo_iso = pais_con_fronteras.codigo_iso
         fronteras = pais_con_fronteras.fronteras
         geometria = pais_con_fronteras.geometria
-        
+    
         pais_localidad = self.generar_malla_clima_actual_pais(nombre_pais)
         lons = pais_localidad.lon
         lats = pais_localidad.lat
@@ -198,6 +201,11 @@ class AppMeteo:
         grid_x_c, grid_y_c = self.transformar_coordenadas(grid_x_c, grid_y_c)
         grid_x_d, grid_y_d = self.transformar_coordenadas(grid_x_d, grid_y_d)
 
+        # Resolución del mapa #######################################
+        if codigo_iso in paises_pequenos:
+            resolucion = '10m'
+        else:
+            resolucion = '110m'
         
         return(lons_array, lats_array,
                lon_min, lon_max,
@@ -207,7 +215,8 @@ class AppMeteo:
                grid_z_temp, grid_z_hum, 
                grid_z_raf_viento, 
                grid_z_velx_viento, grid_z_vely_viento, 
-               nombre, geometria)
+               nombre, geometria,
+               resolucion)
     
     def transformar_coordenadas(self, lon, lat):
         lon_transform, lat_transform = self.transformador.transform(lon, lat)

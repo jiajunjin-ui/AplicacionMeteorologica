@@ -18,7 +18,7 @@ class SistemaPais:
         self.cache_geometria_fronteras = {}
         self.base_datos_10m = self._cargar_db_paises("10m")
         self.base_datos_110m = self._cargar_db_paises("110m")
-        self._generar_list_paises_pequeños()
+        self.paises_pequenos = self._generar_list_paises_pequeños()
         
     # Métodos principales --------------------------------------
     def normalizar_texto(self, texto):
@@ -82,7 +82,7 @@ class SistemaPais:
                     list_cod_vis_baja_resolucion.append(codigo_iso)
                 else:
                     list_cod_vis_alta_resolucion.append(codigo_iso)
-        self.paises_pequenos = sorted(list(set(list_cod_vis_baja_resolucion) - set(list_cod_vis_alta_resolucion)))
+        return sorted(list(set(list_cod_vis_baja_resolucion) - set(list_cod_vis_alta_resolucion)))
 
 
     # Métodos especializados -----------------------------------
@@ -150,10 +150,9 @@ class SistemaPais:
             crs_tranform = ccrs.epsg(3857)
             geom_pais_transform = crs_tranform.project_geometry(geometria_pais, crs_original)
 
-            if codigo_pais in self.paises_pequenos:
-                geometria_suavizada = simplify(geom_pais_transform, tolerance=0.05, preserve_topology=True)
-            else:
-                geometria_suavizada = simplify(geom_pais_transform, tolerance=0.10, preserve_topology=True)
+            tolerancia = geom_pais_transform.length * 0.001
+            geometria_suavizada = simplify(geom_pais_transform, tolerance=tolerancia, preserve_topology=True)
+        
             
             self.cache_geometria_fronteras[codigo_pais] = (geometria_suavizada, geometria_pais.bounds)
             pais.geometria = geometria_suavizada

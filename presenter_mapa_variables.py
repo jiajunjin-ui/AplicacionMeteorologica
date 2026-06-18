@@ -41,7 +41,8 @@ class PresenterMapaVariables:
              grid_z_temp, grid_z_hum, 
              grid_z_raf_viento,
              grid_z_velx_viento, grid_z_vely_viento,
-             nombre_pais, geometria_pais) = datos
+             nombre_pais, geometria_pais, 
+             resolucion) = datos
             self.dic_datos = {
                 'lons_array': lons_array,
                 'lats_array': lats_array,
@@ -52,7 +53,8 @@ class PresenterMapaVariables:
                 'grid_z_temp': grid_z_temp, 'grid_z_hum': grid_z_hum, 
                 'grid_z_raf_viento': grid_z_raf_viento, 
                 'grid_z_velx_viento': grid_z_velx_viento, 'grid_z_vely_viento': grid_z_vely_viento,
-                'nombre_pais': nombre_pais, 'geometria_pais': geometria_pais
+                'nombre_pais': nombre_pais, 'geometria_pais': geometria_pais, 
+                'resolucion': resolucion
             }
         except Exception as e:
             self.vista.mensaje('Error', str(e))
@@ -74,7 +76,7 @@ class PresenterMapaVariables:
             geometria_pais = self.dic_datos['geometria_pais']
             nombre_pais = self.dic_datos['nombre_pais']
 
-            lista_variables = ['Temperatura', 'Humedad Relativa', 'Vientos']
+            resolucion = self.dic_datos['resolucion']
 
             if geometria_pais is None:
                 self.vista.mensaje_info('Error al cargar fronteras',
@@ -85,7 +87,7 @@ class PresenterMapaVariables:
                                     lon_min, lon_max,
                                     lat_min, lat_max,
                                     nombre_pais, geometria_pais,
-                                    lista_variables
+                                    resolucion
                                     )
         except Exception as e:
             self.vista.mensaje('Error', str(e))
