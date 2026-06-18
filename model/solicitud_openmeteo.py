@@ -81,33 +81,71 @@ class SolicitudOpenMeteo:
                 "relative_humidity_2m", 
                 "precipitation_probability", 
                 "wind_speed_10m", 
+                "wind_direction_10m",
+                "wind_gusts_10m",
                 "weather_code",
                 "is_day"
                 ],
             "timezone": "auto",
+            "format": "flatbuffers"
             }
     
         responses = self.openmeteo.weather_api(self.url_openmeteo, params=params)
-        response = responses[0]
 
-        actual=response.Current()
+        temp_2m_actual_list = []
+        hum_rel_actual_list = []
+        prob_precip_actual_list = []
+        wind_speed_10m_actual_list = []
+        wind_direction_10m_actual_list = []
+        wind_gusts_10m_actual_list = []
+        weather_code_actual_list = []
+        is_day_actual_list = []
+        
+        es_lista = False
+        
+        if isinstance(self.localidad.lon, list) and isinstance(self.localidad.lat, list):
+            es_lista = True 
 
-        temp_2m_actual = actual.Variables(0).Value()
-        hum_rel_actual = actual.Variables(1).Value()
-        prob_precip_actual = actual.Variables(2).Value()
-        wind_speed_10m_actual = actual.Variables(3).Value()
-        weather_code_actual = actual.Variables(4).Value()
-        is_day_actual = actual.Variables(5).Value()
-        date_actual = pd.to_datetime(actual.Time(), unit="s", utc=True)
-        return Parametro(
-            temperatura=temp_2m_actual,
-            humedad=hum_rel_actual,
-            viento=wind_speed_10m_actual,
-            prob_precip=prob_precip_actual,
-            weather_code=weather_code_actual,
-            date=date_actual,
-            is_day=is_day_actual
-            )
+        for response in responses:
+            actual=response.Current()
+
+            temp_2m_actual_list.append(actual.Variables(0).Value())
+            hum_rel_actual_list.append(actual.Variables(1).Value())
+            prob_precip_actual_list.append(actual.Variables(2).Value())
+            wind_speed_10m_actual_list.append(actual.Variables(3).Value())
+            wind_direction_10m_actual_list.append(actual.Variables(4).Value())
+            wind_gusts_10m_actual_list.append(actual.Variables(5).Value())
+            weather_code_actual_list.append(actual.Variables(6).Value())
+            is_day_actual_list.append(actual.Variables(7).Value())
+            date_actual = pd.to_datetime(actual.Time(), unit="s", utc=True)
+        
+        if es_lista:
+            return Parametro(
+                temperatura=temp_2m_actual_list,
+                humedad=hum_rel_actual_list,
+                viento=wind_speed_10m_actual_list,
+                direccion_viento=wind_direction_10m_actual_list,
+                rafaga_viento=wind_gusts_10m_actual_list,
+                prob_precip=prob_precip_actual_list,
+                weather_code=weather_code_actual_list,
+                date=date_actual,
+                is_day=is_day_actual_list
+                )
+        
+        else:
+            return Parametro(
+                temperatura=temp_2m_actual_list[0],
+                humedad=hum_rel_actual_list[0],
+                viento=wind_speed_10m_actual_list[0],
+                direccion_viento=wind_direction_10m_actual_list[0],
+                rafaga_viento=wind_gusts_10m_actual_list[0],
+                prob_precip=prob_precip_actual_list[0],
+                weather_code=weather_code_actual_list[0],
+                date=date_actual,
+                is_day=is_day_actual_list[0]
+                )
+    
+    
 
 if __name__ == '__main__':
     localidad = Localidad(nombre="Barcelona", lat=41.3888, lon=2.159 )

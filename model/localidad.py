@@ -1,5 +1,7 @@
 class Localidad:
-    """Clase que da información sobre la ciudad seleccionada por el usuario.
+    """Clase que da información sobre la localidad seleccionada por el usuario. 
+         
+    Las localidades pueden ser ciudades, puntos del mapa o países.
 
     Parameter
     ----------
@@ -7,10 +9,10 @@ class Localidad:
 
     - nombre : str
         Caneda de texto que corresponde al nombre de la localidad
-    - lat : float
-        Valor numérico que corresponde a la latitud de la localidad
-    - lon : float
-        Valor numérico que corresponde a la longitud de la localidad
+    - lat : float or list
+        Valor numérico o lista de valores num. que corresponde a la latitud/es de una localidad
+    - lon : float or list 
+        Valor numérico o lista de valores num. que corresponde a la longitud/es de una localidad
     - forzar_set : bool
         Variable que al estar en True fuerza el set sin validación 
     Atributo de instancia 
@@ -24,7 +26,7 @@ class Localidad:
         self._nombre = None
         if nombre is not None:
             if forzar_set == True:
-                self._nombre = nombre  # Forzar el setter 
+                self._nombre = nombre  # Saltar validación
             else:
                 self.nombre = nombre 
         

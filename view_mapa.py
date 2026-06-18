@@ -2,21 +2,23 @@ import tkinter as tk
 import tkinter.messagebox
 from tkintermapview import TkinterMapView
 from model import Event
-from view_base import ViewBase
 import os
 from PIL import Image, ImageTk
+
+from view_base import ViewBase
 
 class ViewMapa(ViewBase):
     def __init__(self, parent, mediador_view):
         super().__init__(
-            parent, 
-            mediador_view, 
-            titulo = "Mapa meteorologico", 
-            size = '960x560')
+            parent,
+            mediador_view,
+            titulo ="Mapa meteorologico",
+            size = '960x560'
+        )
 
-        self.marcador_actual = None
-        self.marcadores_actuales = []
-        self.datos_marcadores_actuales = []
+        self.marcador_actual = None # Marcador en el mapa
+        self.marcadores_actuales = [] # Marcadores en el mapa cuando se busca pais
+        self.datos_marcadores_actuales = [] # Datos de cada marcador
 
         self.icono_sol = self.cargar_icono("sol.png")
         self.icono_nube = self.cargar_icono("nube.png")
@@ -26,12 +28,13 @@ class ViewMapa(ViewBase):
         self.icono_niebla = self.cargar_icono("niebla.png")
         self.icono_luna = self.cargar_icono("luna.png")
 
-        self.btn_buscar = Event()
-        self.btn_select = Event()
-        self.click_mapa = Event()
-        self.btn_buscar_pais = Event()
+        self.btn_buscar = Event() # Boton para buscar localidad
+        self.btn_select = Event() # Boton para seleccionar localidades proporcionadas
+        self.click_mapa = Event() # Boton para clicar mapa
+        self.btn_buscar_pais = Event() # Boton para buscar el pais
+        self.btn_select_pais = Event() # Boton para seleccionar el pais proporcionado
 
-        self.lista_btn = []
+        self.lista_btn = [] # Lista de botones con localidades/paises similares
 
         self.setup_ui()
 
@@ -42,7 +45,7 @@ class ViewMapa(ViewBase):
         self.grid_rowconfigure(0, weight=1)
 
         # COLUMNA IZQUIERDA
-        self.columna_izq = tk.Frame(self, width=200, padx=10, pady=10)
+        self.columna_izq = tk.Frame(self, width=250, padx=10, pady=10)
         self.columna_izq.grid(row=0, column=0, sticky="nsew")
         self.columna_izq.grid_propagate(False)
 
@@ -73,7 +76,7 @@ class ViewMapa(ViewBase):
         # COLUMNA DERECHA
         mapa = tk.Frame(self)
         mapa.grid(row=0, column=1, sticky="nsew")
-        self.mapa = TkinterMapView(mapa, width=600, height=560, corner_radius=0)
+        self.mapa = TkinterMapView(mapa, width=710, height=560, corner_radius=0)
         self.mapa.pack(fill="both", expand=True)
         self.mapa.set_position(40.4168, -3.7038)
         self.mapa.set_zoom(6)
@@ -84,14 +87,11 @@ class ViewMapa(ViewBase):
         return self.entrada_ciudad.get().strip()
 
     def mostrar_error(self, mensaje):
-        print(mensaje)
+        tk.messagebox.showerror("Error", mensaje)
 
     def al_hacer_click_mapa(self, coordenadas):
         """
-        Esta funcion se ejecuta cuando el usuario hace clic en el mapa.
-
-        coordenadas es una tupla:
-        (latitud, longitud)
+        Esta funcion se ejecuta cuando el usuario hace clic en el mapa y devuelve las coordenadas en una tupla (latitud, longitud)
         """
         self.click_mapa.emit(coordenadas)
 
@@ -180,7 +180,18 @@ class ViewMapa(ViewBase):
                         command=lambda ciudad=nombre_ciudad: self.seleccionar_ciudad(ciudad), 
                         width=30
             )
-            boton.grid(row=n+7, column=0, pady=2)
+            boton.grid(row=n+7, column=0, pady=5, sticky="w")
+            self.lista_btn.append(boton)
+
+    def mostrar_lista_paises(self, lista):
+        self.limpiar_lista_btn()
+        for n, nombre_pais in enumerate(lista):
+            boton = tk.Button(
+                        self.columna_izq,
+                        text=nombre_pais,
+                        command=lambda pais=nombre_pais: self.seleccionar_pais(pais)
+            )
+            boton.grid(row=n+7, column=0, pady=5, sticky="ew")
             self.lista_btn.append(boton)
     
     def limpiar_lista_btn(self):
@@ -193,6 +204,10 @@ class ViewMapa(ViewBase):
         """Funcion que toma la referencia (str) de la ciudad elegida por
            el usuario, para operar con ella."""
         self.btn_select.emit(nombre_ciudad)
+        self.limpiar_lista_btn()
+
+    def seleccionar_pais(self, nombre_pais):
+        self.btn_select_pais.emit(nombre_pais)
         self.limpiar_lista_btn()
 
     def limpiar_marcadores(self):

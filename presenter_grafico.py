@@ -9,7 +9,7 @@ class PresenterGrafico:
         # Suscripción a las señales de la vista
         self.vista.btnBuscar.add_listener(self.f_actualizar_lista)
         self.vista.btnSelect.add_listener(self.f_actualizar_grafico)
-        self.vista.btnCambiarPantallaInicio.add_listener(self.f_cambiar_a_pantalla_Inicio)
+        self.vista.btnCambiarPantallaInicio.add_listener(self.f_cambiar_a_pantalla_inicio)
 
 
     def f_actualizar_lista(self):
@@ -37,7 +37,7 @@ class PresenterGrafico:
         except Exception as e:
             self.vista.mensaje('Error', str(e))
 
-    def f_cambiar_a_pantalla_Inicio(self):
+    def f_cambiar_a_pantalla_inicio(self):
         """Cambia a la pantalla del Inicio"""
         try:
             self.mediador.cambiar_presenter('PresenterInicio')

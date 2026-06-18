@@ -2,7 +2,7 @@ import requests
 from .localidad import Localidad
 
 class SistemaLocalizacion:
-    """Clase que da información geocoding de las localidades(ciudades y puntos en mapa),
+    """Clase que da información geocoding de las localidades(ciudades o puntos en mapa),
     devolviendo los resultados en instancias de Localidad.
     - Usa un str del nombre completo o incompleto de la ciudad -----> devuelve una instancia de Localidad() 
     - Usa una tupla de coordenadas ----> devuelve una instancia de Localidad()
