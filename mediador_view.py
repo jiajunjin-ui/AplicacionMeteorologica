@@ -5,6 +5,7 @@ import gc
 from view_grafico import ViewGrafico
 from view_mapa import ViewMapa
 from view_inicio import ViewInicio
+from view_ranking import ViewRanking
 from view_mapa_variables import ViewMapaVariables
 
 class MediadorView:
@@ -23,6 +24,7 @@ class MediadorView:
         # Registro de pantallas ###########################
         self._registrar_view(ViewGrafico)
         self._registrar_view(ViewMapa)
+        self._registrar_view(ViewRanking)
         self._registrar_view(ViewInicio)
         self._registrar_view(ViewMapaVariables)
 
@@ -41,7 +43,7 @@ class MediadorView:
             frame_pantalla.tkraise()
         else:
             raise KeyError(f'La pantalla {nombre_pantalla} no existe')
-    
+
     def _cerrar_view(self):
         for fig_num in plt.get_fignums():
             try:
@@ -51,7 +53,7 @@ class MediadorView:
                 plt.close(fig)
             except:
                 pass
-        
+
         plt.close('all')
         gc.collect()
 
@@ -59,4 +61,3 @@ class MediadorView:
 
     def obtener_frame_view_actual(self):
         return self._view_actual
-    

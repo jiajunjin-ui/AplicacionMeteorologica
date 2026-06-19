@@ -14,11 +14,11 @@ class ViewGrafico(ViewBase):
     """View de la representación gráfica de la evolución de las variables climáticas, predicciones a 3 días."""
     def __init__(self, parent, mediador_view):
         super().__init__(
-            parent, 
-            mediador_view, 
-            titulo = "Previsión por ciudad", 
+            parent,
+            mediador_view,
+            titulo = "Previsión por ciudad",
             size = '800x500')
-      
+
       # Eventos: patrón Observer ############################
         self.btnBuscar = Event()
         self.btnSelect = Event()
@@ -56,7 +56,7 @@ class ViewGrafico(ViewBase):
         self.entry_busca.focus_set()
         self.btn_busca = ttk.Button(self.frame2, text="Buscar", command=lambda: self.actualizar_lista_btn())
         self.btn_cambiar_a_inicio = ttk.Button(self.frame2, text="Inicio", command=lambda: self.cambiar_a_pantalla_inicio())
-    
+
       # Organización ########################################
         self.label_busca.grid(row=1, column=2, pady=5)
         self.entry_busca.grid(row=1, column=3, pady=5)
@@ -107,7 +107,7 @@ class ViewGrafico(ViewBase):
     def crear_grafico(self, date, temp, hum_rel, viento, prob_precip, estado_cielo):
         """Método que crear los widgets (CheckButtons) y el canvas del 
         gráfico"""
-      # Guardar datos ####################################### 
+      # Guardar datos #######################################
         self.date = date
         nombre_vars = ["Temperatura", "Humedad Rel.", "Viento", "Prob. Precipitación", "Estado Cielo"]
         self.datos_variables = {
@@ -116,7 +116,7 @@ class ViewGrafico(ViewBase):
             "Viento": viento,
             "Prob. Precipitación": prob_precip,
             "Estado Cielo": estado_cielo
-            }  
+            }
 
       # Contenedor para los CheckBtn ########################
         self.conten_checkbtn = tk.Frame(self.frame3)
@@ -155,7 +155,7 @@ class ViewGrafico(ViewBase):
             if estado.get():  #  -----> estado = tk.BooleanVar(value=True);  estado.get
                 vars_select.append(var)
 
-        if vars_select:  
+        if vars_select:
             self.ax.xaxis_date()
             self.ax.xaxis.set_major_formatter(mdates.DateFormatter('%d-%m-%Y\n%H:%M'))
             self.ax.xaxis.set_major_locator(mdates.HourLocator(byhour=[0, 12]))
@@ -194,7 +194,7 @@ class ViewGrafico(ViewBase):
                     pass
                 self.fig = None
                 self.ax = None
-                
+
             for checkbtn in self.lista_checkbtn:
                 checkbtn.destroy()
             self.lista_checkbtn.clear()
@@ -210,6 +210,7 @@ class ViewGrafico(ViewBase):
 
 if __name__ == "__main__":
     from mediador_view import MediadorView
+
     ventana = tk.Tk()
     mediador_view = MediadorView(ventana)
     mediador_view.cambiar_frame_view('ViewGrafico')

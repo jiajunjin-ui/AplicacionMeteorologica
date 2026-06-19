@@ -115,8 +115,7 @@ class PresenterMapa:
         if weather_code == 0:
             if is_day == 1:
                 return "sol"
-            else:
-                return "luna"
+            return "luna"
         if weather_code in [1, 2, 3]:
             return "nube"
         if weather_code in [45, 48]:
@@ -127,6 +126,7 @@ class PresenterMapa:
             return "nieve"
         if weather_code in [95, 96, 99]:
             return "tormenta"
+        return "nube"
 
     def f_buscar_pais(self):
         """

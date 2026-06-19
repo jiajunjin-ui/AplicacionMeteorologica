@@ -1,5 +1,6 @@
 from presenter_grafico import PresenterGrafico
 from presenter_mapa import PresenterMapa
+from presenter_ranking import PresenterRanking
 from presenter_inicio import PresenterInicio
 from presenter_mapa_variables import PresenterMapaVariables
 
@@ -14,9 +15,10 @@ class MediadorPresenter:
         # Registro de presenters ##########################
         self._registrar_presenter(PresenterGrafico, 'ViewGrafico')
         self._registrar_presenter(PresenterMapa, 'ViewMapa')
+        self._registrar_presenter(PresenterRanking, 'ViewRanking')
         self._registrar_presenter(PresenterInicio, 'ViewInicio')
         self._registrar_presenter(PresenterMapaVariables, 'ViewMapaVariables')
-    
+
     def _registrar_presenter(self, clase_presenter, nombre_view):
         """Método que registra la clase del presenter y el nobre(str) del view associado"""
         nombre_presenter = clase_presenter.__name__

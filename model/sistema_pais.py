@@ -1,3 +1,4 @@
+import requests
 import geonamescache
 import unicodedata
 from shapely import simplify
@@ -13,13 +14,14 @@ class SistemaPais:
     """Clase encargada de buscar países y sus ciudades principales."""
 
     def __init__(self):
+        self.url_buscar_pais = "https://nominatim.openstreetmap.org/search"
         self.geo_cache = geonamescache.GeonamesCache()
         self._paises_encontrados = {}
         self.cache_geometria_fronteras = {}
         self.base_datos_10m = self._cargar_db_paises("10m")
         self.base_datos_110m = self._cargar_db_paises("110m")
         self.paises_pequenos = self._generar_list_paises_pequeños()
-        
+
     # Métodos principales --------------------------------------
     def normalizar_texto(self, texto):
         texto = texto.strip().lower()
@@ -29,7 +31,7 @@ class SistemaPais:
             if unicodedata.category(caracter) != "Mn"
         )
         return texto
-    
+
     def _cargar_db_paises(self, resolucion):
         shp_archivo = shpreader.natural_earth(resolution=resolucion,
                                               category='cultural',
@@ -63,13 +65,13 @@ class SistemaPais:
             raise ValueError("No se encontro ningun pais.")
 
         return sorted(self._paises_encontrados.keys())
-    
+
     def seleccionar_pais(self, nombre_pais):
         """Devuelve el pais seleccionado de la lista generada."""
         if nombre_pais not in self._paises_encontrados:
             raise KeyError("Seleccione un pais de la lista generada.")
         return self._paises_encontrados[nombre_pais]
-    
+
     def _generar_list_paises_pequeños(self):
         list_cod_vis_baja_resolucion = []
         list_cod_vis_alta_resolucion = []
@@ -84,13 +86,22 @@ class SistemaPais:
                     list_cod_vis_alta_resolucion.append(codigo_iso)
         return sorted(list(set(list_cod_vis_baja_resolucion) - set(list_cod_vis_alta_resolucion)))
 
+    def seleccionar_pais(self, nombre_pais):
+        """Devuelve el pais seleccionado de la lista generada."""
+        if nombre_pais not in self._paises_encontrados:
+            raise KeyError("Seleccione un pais de la lista generada.")
+        return self._paises_encontrados[nombre_pais]
 
-    # Métodos especializados -----------------------------------
-    # Mapa de elementos discretos 
     def buscar_ciudades_principales(self, nombre_pais, cantidad):
         pais = self.seleccionar_pais(nombre_pais)
         pais.localidades = []
-        
+
+    # Métodos especializados -----------------------------------
+    # Mapa de elementos discretos
+    def buscar_ciudades_principales(self, nombre_pais, cantidad):
+        pais = self.seleccionar_pais(nombre_pais)
+        pais.localidades = []
+
         ciudades = self.geo_cache.get_cities()
         ciudades_del_pais = []
 
@@ -117,8 +128,8 @@ class SistemaPais:
             pais.agregar_localidad(localidad)
 
         return pais
-    
-    # Mapa de elementos continuos 
+
+    # Mapa de elementos continuos
     def cargar_fronteras_pais(self, nombre_pais):
         """Método que asigna los límites y la geometría del país a una instancia de la clase Pais"""
         pais = self.seleccionar_pais(nombre_pais)
@@ -134,14 +145,14 @@ class SistemaPais:
             db = self.base_datos_10m
         else:
             db = self.base_datos_110m
-        
+
         geometria_pais = None
         for ne_pais in db:
             if ne_pais.attributes.get('ISO_A2_EH') == codigo_pais:
                 geometria_completa = ne_pais.geometry
                 if isinstance(geometria_completa, MultiPolygon):
                     geometria_pais = max(geometria_completa.geoms, key=lambda p: p.area)
-                else: 
+                else:
                     geometria_pais = geometria_completa
                 break
 
@@ -152,13 +163,12 @@ class SistemaPais:
 
             tolerancia = geom_pais_transform.length * 0.001
             geometria_suavizada = simplify(geom_pais_transform, tolerance=tolerancia, preserve_topology=True)
-        
-            
+
+
             self.cache_geometria_fronteras[codigo_pais] = (geometria_suavizada, geometria_pais.bounds)
             pais.geometria = geometria_suavizada
             pais.fronteras = geometria_pais.bounds
         else:
             raise ValueError("Error al generar la geometria del país")
-        
-        return pais 
-            
+
+        return pais

@@ -7,6 +7,7 @@ class PresenterInicio:
         self.vista.btnCambiarPantallaGrafico.add_listener(self.f_cambiar_a_pantalla_grafico)
         self.vista.btnCambiarPantallaMapaDis.add_listener(self.f_cambiar_a_pantalla_mapa_dis)
         self.vista.btnCambiarPantallaMapaCont.add_listener(self.f_cambiar_a_pantalla_mapa_cont)
+        self.vista.btnCambiarPantallaRanking.add_listener(self.f_cambiar_a_pantalla_ranking)
 
     def f_cambiar_a_pantalla_grafico(self):
         """Cambia a la pantalla del gráfico"""
@@ -15,7 +16,7 @@ class PresenterInicio:
             self.mediador.obtener_presenter_actual()
         except Exception as e:
             self.vista.mensaje('Error', str(e))
-    
+
     def f_cambiar_a_pantalla_mapa_dis(self):
         """Cambia a la pantalla del mapa de elementos discretos"""
         try:
@@ -23,11 +24,19 @@ class PresenterInicio:
             self.mediador.obtener_presenter_actual()
         except Exception as e:
             self.vista.mensaje('Error', str(e))
-    
+
     def f_cambiar_a_pantalla_mapa_cont(self):
         """Cambia a la pantalla del mapa de elementos continuos"""
         try:
             self.mediador.cambiar_presenter('PresenterMapaVariables')
+            self.mediador.obtener_presenter_actual()
+        except Exception as e:
+            self.vista.mensaje('Error', str(e))
+
+    def f_cambiar_a_pantalla_ranking(self):
+        """Cambia a la pantalla del ranking"""
+        try:
+            self.mediador.cambiar_presenter('PresenterRanking')
             self.mediador.obtener_presenter_actual()
         except Exception as e:
             self.vista.mensaje('Error', str(e))

@@ -10,13 +10,14 @@ class ViewInicio(ViewBase):
         super().__init__(
             parent, 
             mediador_view, 
-            titulo = "Aplicación Meteorológica", 
+            titulo = "Aplicación Meteorológica",
             size = '400x300')
         
         # Eventos: patrón Observer ###########################
         self.btnCambiarPantallaGrafico = Event()
         self.btnCambiarPantallaMapaDis = Event()
         self.btnCambiarPantallaMapaCont = Event()
+        self.btnCambiarPantallaRanking = Event()
 
         self.setup_ui()
 
@@ -27,43 +28,53 @@ class ViewInicio(ViewBase):
         self.frame_central.grid_propagate(False)
         self.frame_central.columnconfigure(0, weight=3)
         self.frame_central.rowconfigure(0, weight=1)
-        self.frame_central.rowconfigure(4, weight=1)
+        self.frame_central.rowconfigure(5, weight=1)
 
         # Elementos ##########################################
-        btn_ir_a_grafico = tk.Button(self.frame_central, 
+        btn_ir_a_grafico = tk.Button(self.frame_central,
                                            text='Previsión por ciudad',
-                                           width=20, 
+                                           width=20,
                                            font=("Arial", 11),
                                            command=lambda: self.cambiar_a_pantalla_grafico()
                                            )
-        btn_ir_a_mapa_dis = tk.Button(self.frame_central, 
-                                        text='Mapas elementos discretos', 
+        btn_ir_a_mapa_dis = tk.Button(self.frame_central,
+                                        text='Mapas elementos discretos',
                                         width=20,
                                         font=("Arial", 11),
                                         command=lambda: self.cambiar_a_pantalla_mapa_dis()
                                         )
-        
-        btn_ir_a_mapa_cont = tk.Button(self.frame_central, 
-                                        text='Mapas elementos continuos', 
+
+        btn_ir_a_mapa_cont = tk.Button(self.frame_central,
+                                        text='Mapas elementos continuos',
                                         width=20,
                                         font=("Arial", 11),
                                         command=lambda: self.cambiar_a_pantalla_mapa_cont()
                                         )
 
+        btn_ir_a_ranking = tk.Button(self.frame_central,
+                                       text='Ranking',
+                                       width=20,
+                                       font=("Arial", 11),
+                                       command=lambda: self.cambiar_a_pantalla_ranking()
+                                       )
         # Organización #######################################
         btn_ir_a_grafico.grid(row=1, column=0, columnspan=4, padx= 10, pady=5)
         btn_ir_a_mapa_dis.grid(row=2, column=0, columnspan=4, padx=10, pady=5)
         btn_ir_a_mapa_cont.grid(row=3, column=0, columnspan=4, padx=10, pady=5)
+        btn_ir_a_ranking.grid(row=4, column=0, columnspan=4, padx=10, pady=5)
 
     def cambiar_a_pantalla_grafico(self):
         self.btnCambiarPantallaGrafico.emit()
     
     def cambiar_a_pantalla_mapa_dis(self):
         self.btnCambiarPantallaMapaDis.emit()
-    
+
     def cambiar_a_pantalla_mapa_cont(self):
         self.btnCambiarPantallaMapaCont.emit()
-    
+
+    def cambiar_a_pantalla_ranking(self):
+        self.btnCambiarPantallaRanking.emit()
+
     def mensaje(self, prompt, txt):
         """Muestra error con messagebox"""
         tk.messagebox.showerror(prompt, txt)
