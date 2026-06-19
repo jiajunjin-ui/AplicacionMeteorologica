@@ -13,14 +13,11 @@ class ViewRanking(ViewBase):
         self.btnBuscarPais = Event()
         self.btnSelectPais = Event()
         self.btnGenerarRanking = Event()
-        self.opciones_ranking = [
-            ("mas_calurosas", "Más calurosas"),
-            ("mas_frias", "Más frías"),
-            ("mas_viento", "Mas viento"),
-            ("mas_humedad", "Mas humedad"),
-        ]
-        self.ranking_por_etiqueta = {
-            etiqueta: codigo for codigo, etiqueta in self.opciones_ranking
+        self.opciones_ranking = {
+            "mas_calurosas": "Más calurosas",
+            "mas_frias": "Más frías",
+            "mas_viento": "Más viento",
+            "mas_humedad": "Más humedad",
         }
 
         super().__init__(
@@ -67,7 +64,7 @@ class ViewRanking(ViewBase):
 
         self.combo_tipo = ttk.Combobox(
             self.columna_izq,
-            values=[etiqueta for _, etiqueta in self.opciones_ranking],
+            values=list(self.opciones_ranking.values()),
             state="readonly"
         )
         self.combo_tipo.current(0)
@@ -128,8 +125,7 @@ class ViewRanking(ViewBase):
         return self.entrada_pais.get().strip()
 
     def obtener_tipo_ranking(self):
-        etiqueta = self.combo_tipo.get()
-        return self.ranking_por_etiqueta[etiqueta]
+        return list(self.opciones_ranking.keys())[self.combo_tipo.current()]
 
     def obtener_cantidad_ciudades(self):
         return int(self.entry_cantidad.get())
@@ -192,6 +188,10 @@ class ViewRanking(ViewBase):
 
 
 if __name__ == "__main__":
+    from mediador_view import MediadorView
+
     ventana = tk.Tk()
-    vista = ViewRanking(ventana, None)
+    mediador_view = MediadorView(ventana)
+    mediador_view.cambiar_frame_view("ViewRanking")
+    mediador_view.obtener_frame_view_actual()
     ventana.mainloop()

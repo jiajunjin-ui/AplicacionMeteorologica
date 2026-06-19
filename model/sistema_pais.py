@@ -92,7 +92,6 @@ class SistemaPais:
                 lon=float(ciudad["longitude"]),
                 forzar_set=True
             )
-
             pais.agregar_localidad(localidad)
 
         return pais
