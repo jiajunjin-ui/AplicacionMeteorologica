@@ -101,7 +101,8 @@ class ViewMapaVariables(ViewBase):
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.columna_der)
         self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
         self.canvas.draw_idle()
-
+    
+    # MÉTODOS DE GENERACIÓN Y GESTIÓN DE PAISES -----------------------------------------
     def entrada(self):
         """Método que toma el texto de Entry."""
         return self.entry_pais.get()
@@ -127,11 +128,12 @@ class ViewMapaVariables(ViewBase):
         for boton in self.lista_btn:
             boton.destroy()
         self.lista_btn.clear()
-
+    
     def seleccionar_pais(self, nombre_pais):
         self.btnSelect_pais.emit(nombre_pais)
         self.limpiar_lista_paises()
     
+    # MÉTODOS DE GESTIÓN DE SELECTORES --------------------------------------------------
     def mostrar_selector_var(self):
         self.frame_var.grid(row=4, column=0, pady=15, sticky="ew")
 
