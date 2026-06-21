@@ -8,14 +8,14 @@ import cartopy.feature as cfeature
 from cartopy.feature import ShapelyFeature
 
 from model import Event
-from view_base import ViewBase
+from view.view_base import ViewBase
 
 class ViewMapaVariables(ViewBase):
     def __init__(self, parent, mediador_view):
         super().__init__(
             parent, 
             mediador_view, 
-            titulo = "Mapa meteorologico", 
+            titulo = "MAPA METEOROLÓGICO DE ELEMENTOS CONTINUOS", 
             size = '960x560')
         
         # Eventos: patrón Observer ############################
@@ -61,7 +61,7 @@ class ViewMapaVariables(ViewBase):
         # Elementos 
         self.label_instruccion = tk.Label(self.columna_izq, text="Introduzca País")
         self.entry_pais = tk.Entry(self.columna_izq, width=25)
-        btn_buscar_pais = ttk.Button(self.columna_izq, text="Mostrar país", command=lambda: self.actualizar_lista_paises())
+        btn_buscar_pais = ttk.Button(self.columna_izq, text="Mostrar país/región", command=lambda: self.actualizar_lista_paises())
         btn_ir_a_inicio = ttk.Button(self.columna_izq, width=10 , text="Inicio", command=lambda: self.cambiar_a_pantalla_inicio())
 
         # Organización
@@ -70,7 +70,7 @@ class ViewMapaVariables(ViewBase):
         btn_buscar_pais.grid(row=3, column=0, pady=5, sticky="ew")
         btn_ir_a_inicio.grid(row=0, column=0, sticky="w")
 
-        # Elementos y Organización
+        # Elementos y Organización (Radiobutton)
         self.lista_variables= ['Temperatura', 'Humedad Relativa', 'Vientos']
         self.seleccion = tk.IntVar()
         for n, var in enumerate(self.lista_variables):
@@ -101,7 +101,8 @@ class ViewMapaVariables(ViewBase):
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.columna_der)
         self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
         self.canvas.draw_idle()
-
+    
+    # MÉTODOS DE GENERACIÓN Y GESTIÓN DE PAISES -----------------------------------------
     def entrada(self):
         """Método que toma el texto de Entry."""
         return self.entry_pais.get()
@@ -127,11 +128,12 @@ class ViewMapaVariables(ViewBase):
         for boton in self.lista_btn:
             boton.destroy()
         self.lista_btn.clear()
-
+    
     def seleccionar_pais(self, nombre_pais):
         self.btnSelect_pais.emit(nombre_pais)
         self.limpiar_lista_paises()
     
+    # MÉTODOS DE GESTIÓN DE SELECTORES --------------------------------------------------
     def mostrar_selector_var(self):
         self.frame_var.grid(row=4, column=0, pady=15, sticky="ew")
 
@@ -142,7 +144,7 @@ class ViewMapaVariables(ViewBase):
     def generar_mapa(self, lons_array, lats_array, 
                         lon_min, lon_max, 
                         lat_min, lat_max,
-                        nombre_pais, geometria_pais, 
+                        nombre_pais, geometria_pais, fecha,
                         resolucion):  
         
         self.limpiar_mapa()
@@ -185,7 +187,7 @@ class ViewMapaVariables(ViewBase):
         cuadricula.ylabel_style = {'size': 9}
 
         # Título y formato de ejes #######################################
-        self.ax.set_title(nombre_pais)
+        self.ax.set_title(f'{nombre_pais} {fecha}')
         self.ax.set_aspect('equal', adjustable='box')
 
         # Opciónes de mapa ###############################################
@@ -250,7 +252,7 @@ class ViewMapaVariables(ViewBase):
 
     # MÉTODOS DE LIMPIEZA DE MAPA ------------------------------------------------------
     def limpiar_mapa(self):
-        """Limpia el mapa"""
+        """Limpia todos los elementos gráficos del mapa, dejanbo un canvas en blanco"""
         self.fig.clear()
 
         self.ax = self.fig.add_subplot(111, projection=self.proyeccion)

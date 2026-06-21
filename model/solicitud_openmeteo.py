@@ -117,7 +117,11 @@ class SolicitudOpenMeteo:
             wind_gusts_10m_actual_list.append(actual.Variables(5).Value())
             weather_code_actual_list.append(actual.Variables(6).Value())
             is_day_actual_list.append(actual.Variables(7).Value())
-            date_actual = pd.to_datetime(actual.Time(), unit="s", utc=True)
+
+            zona_h_local = response.Timezone()
+            zona_h_local_str = zona_h_local.decode("utf-8")
+            date_actual_utc = pd.to_datetime(actual.Time(), unit="s", utc=True)
+            date_actual_local = date_actual_utc.tz_convert(zona_h_local_str).strftime("%d-%m-%Y %H:%M:%S")
         
         if es_lista:
             return Parametro(
@@ -128,7 +132,7 @@ class SolicitudOpenMeteo:
                 rafaga_viento=wind_gusts_10m_actual_list,
                 prob_precip=prob_precip_actual_list,
                 weather_code=weather_code_actual_list,
-                date=date_actual,
+                date=date_actual_local,
                 is_day=is_day_actual_list
                 )
         
@@ -141,7 +145,7 @@ class SolicitudOpenMeteo:
                 rafaga_viento=wind_gusts_10m_actual_list[0],
                 prob_precip=prob_precip_actual_list[0],
                 weather_code=weather_code_actual_list[0],
-                date=date_actual,
+                date=date_actual_local,
                 is_day=is_day_actual_list[0]
                 )
     

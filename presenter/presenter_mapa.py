@@ -6,11 +6,21 @@ class PresenterMapa:
         self.modelo = model
         self.mediador = mediador_presenter
 
+        # Limpiar listeners suscritos previamente 
+        self.vista.btn_buscar.clear_listeners()
+        self.vista.btn_select.clear_listeners()
+        self.vista.click_mapa.clear_listeners()
+        self.vista.btn_buscar_pais.clear_listeners()
+        self.vista.btn_select_pais.clear_listeners()
+        self.vista.btnCambiarPantallaInicio.clear_listeners()
+
+        # Suscripción a las señales de la vista
         self.vista.btn_buscar.add_listener(self.f_buscar_nombre) # Cuando se ha pulsado buscar localidad va a la funcion f_buscar_nombre
         self.vista.btn_select.add_listener(self.f_buscar_por_nombre) # Cuando se ha selecciona una de las localidades va a la funcion f_buscar_por_nombre
         self.vista.click_mapa.add_listener(self.f_buscar_por_click) # Cuando se ha clicado en el mapa va a la funcion f_buscar_por_click
         self.vista.btn_buscar_pais.add_listener(self.f_buscar_pais) # Cuando se ha pulsado a buscar pais va a la funcion f_buscar_pais
         self.vista.btn_select_pais.add_listener(self.f_buscar_por_pais) # Cuando se ha seleccionado uno de los paises va a la funcion f_buscar_por_pais
+        self.vista.btnCambiarPantallaInicio.add_listener(self.f_cambiar_a_pantalla_inicio) # Cuando se ha pulsado se redirige a la pantalla de Inicio
 
     def f_buscar_nombre(self):
         """
@@ -189,3 +199,12 @@ class PresenterMapa:
 
         except Exception as e:
             self.vista.mostrar_error(str(e))
+    
+    def f_cambiar_a_pantalla_inicio(self):
+        """Cambia a la pantalla de inicio"""
+        try:
+            self.vista.limpiar_al_cambiar_pantalla()
+            self.mediador.cambiar_presenter('PresenterInicio')
+            self.mediador.obtener_presenter_actual()
+        except Exception as e:
+            self.vista.mensaje('Error', str(e))

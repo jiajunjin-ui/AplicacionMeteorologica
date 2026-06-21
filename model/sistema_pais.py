@@ -11,7 +11,8 @@ from .localidad import Localidad
 
 
 class SistemaPais:
-    """Clase encargada de buscar países y sus ciudades principales."""
+    """Clase encargada de buscar países a partir de un str y 
+    puede devolver una lista de sus ciudades principales, información sobre su geometria y sus límites en coordenadas."""
 
     def __init__(self):
         self.url_buscar_pais = "https://nominatim.openstreetmap.org/search"
@@ -33,6 +34,7 @@ class SistemaPais:
         return texto
 
     def _cargar_db_paises(self, resolucion):
+        """Carga la base de datos de Natural Earth y la transforma en una lista, para poder reiterar el uso de esta"""
         shp_archivo = shpreader.natural_earth(resolution=resolucion,
                                               category='cultural',
                                               name='admin_0_map_units')
@@ -73,6 +75,8 @@ class SistemaPais:
         return self._paises_encontrados[nombre_pais]
 
     def _generar_list_paises_pequeños(self):
+        """Genera una lista de codigos_iso de los países/regiónes 
+        que no son visbles en mapas de baja resolución 110m """
         list_cod_vis_baja_resolucion = []
         list_cod_vis_alta_resolucion = []
         for ne_region in self.base_datos_10m:
@@ -85,16 +89,7 @@ class SistemaPais:
                 else:
                     list_cod_vis_alta_resolucion.append(codigo_iso)
         return sorted(list(set(list_cod_vis_baja_resolucion) - set(list_cod_vis_alta_resolucion)))
-
-    def seleccionar_pais(self, nombre_pais):
-        """Devuelve el pais seleccionado de la lista generada."""
-        if nombre_pais not in self._paises_encontrados:
-            raise KeyError("Seleccione un pais de la lista generada.")
-        return self._paises_encontrados[nombre_pais]
-
-    def buscar_ciudades_principales(self, nombre_pais, cantidad):
-        pais = self.seleccionar_pais(nombre_pais)
-        pais.localidades = []
+    
 
     # Métodos especializados -----------------------------------
     # Mapa de elementos discretos
@@ -172,3 +167,12 @@ class SistemaPais:
             raise ValueError("Error al generar la geometria del país")
 
         return pais
+
+if __name__ == '__main__':
+    sistema_pais = SistemaPais()
+    print(sistema_pais.normalizar_texto('6Uuuu9OI/'))
+    lista_paises = sistema_pais.buscador_nombre_pais('Ale')
+    print(lista_paises)
+    print(sistema_pais.buscar_ciudades_principales(lista_paises[0], 5).localidades)
+    print(sistema_pais.cargar_fronteras_pais(lista_paises[0]).fronteras)
+

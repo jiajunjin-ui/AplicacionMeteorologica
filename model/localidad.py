@@ -1,5 +1,5 @@
 class Localidad:
-    """Clase que da información sobre la localidad seleccionada por el usuario. 
+    """Clase que almacena información sobre la localidad seleccionada por el usuario. 
          
     Las localidades pueden ser ciudades, puntos del mapa o países.
 
@@ -8,7 +8,7 @@ class Localidad:
     Atributos de clase
 
     - nombre : str
-        Caneda de texto que corresponde al nombre de la localidad
+        Caneda de texto correspondiente al nombre de la localidad
     - lat : float or list
         Valor numérico o lista de valores num. que corresponde a la latitud/es de una localidad
     - lon : float or list 

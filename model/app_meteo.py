@@ -8,6 +8,7 @@ from scipy.interpolate import RegularGridInterpolator
 from pyproj import Transformer
 
 class AppMeteo:
+    """Clase que hace de fachada, agrupando todas las clases asociadas a la lógica de negocio."""
     def __init__(self):
         self.buscador = SistemaLocalizacion()
         self.buscador_paises = SistemaPais()
@@ -167,6 +168,7 @@ class AppMeteo:
         lats = pais_localidad.lat
         lons_array = np.array(lons)
         lats_array = np.array(lats)
+        fecha = pais_localidad.parametros.date
 
         # Variables Clímaticas ######################################
         temperaturas = pais_localidad.parametros.temperatura
@@ -251,7 +253,7 @@ class AppMeteo:
                grid_z_temp, grid_z_hum,
                grid_z_raf_viento,
                grid_z_velx_viento, grid_z_vely_viento,
-               nombre, geometria,
+               nombre, geometria, fecha,
                resolucion)
 
     def transformar_coordenadas(self, lon, lat):

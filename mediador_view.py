@@ -2,11 +2,12 @@ import tkinter as tk
 import matplotlib.pyplot as plt
 import gc
 
-from view_grafico import ViewGrafico
-from view_mapa import ViewMapa
-from view_inicio import ViewInicio
-from view_ranking import ViewRanking
-from view_mapa_variables import ViewMapaVariables
+from view import ViewInicio
+from view import ViewGrafico
+from view import ViewMapa
+from view import ViewMapaVariables
+from view import ViewRanking
+
 
 class MediadorView:
     def __init__(self, ventana):

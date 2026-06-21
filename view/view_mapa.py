@@ -5,14 +5,14 @@ from model import Event
 import os
 from PIL import Image, ImageTk
 
-from view_base import ViewBase
+from view.view_base import ViewBase
 
 class ViewMapa(ViewBase):
     def __init__(self, parent, mediador_view):
         super().__init__(
             parent,
             mediador_view,
-            titulo ="Mapa meteorologico",
+            titulo ="MAPA METEOLÓGICO DE ELEMENTOS DISCRETOS",
             size = '960x560'
         )
 
@@ -33,6 +33,7 @@ class ViewMapa(ViewBase):
         self.click_mapa = Event() # Boton para clicar mapa
         self.btn_buscar_pais = Event() # Boton para buscar el pais
         self.btn_select_pais = Event() # Boton para seleccionar el pais proporcionado
+        self.btnCambiarPantallaInicio = Event() # Boton para redirigir a la pantalla Inicio
 
         self.lista_btn = [] # Lista de botones con localidades/paises similares
 
@@ -49,37 +50,40 @@ class ViewMapa(ViewBase):
         self.columna_izq.grid(row=0, column=0, sticky="nsew")
         self.columna_izq.grid_propagate(False)
         self.columna_izq.grid_columnconfigure(0, weight=1)
-        self.columna_izq.grid_rowconfigure(7, weight=1)
+        self.columna_izq.grid_rowconfigure(8, weight=1)
+
+        btn_ir_a_inicio = tk.Button(self.columna_izq, width=10 , text="Inicio", command=lambda: self.cambiar_a_pantalla_inicio())
+        btn_ir_a_inicio.grid(row=0, column=0, sticky="w")
 
         tk.Label(self.columna_izq, text="Introduce una localidad/pais:").grid(
-            row=0,
+            row=1,
             column=0,
             sticky="w"
         )
 
         self.entrada_ciudad = tk.Entry(self.columna_izq, width=25)
-        self.entrada_ciudad.grid(row=1, column=0, sticky="ew")
+        self.entrada_ciudad.grid(row=2, column=0, sticky="ew")
 
         btn_buscar = tk.Button(self.columna_izq, text="Mostrar localidad", command=lambda: self.opera("1"))
-        btn_buscar.grid(row=2, column=0, pady=5, sticky="ew")
+        btn_buscar.grid(row=3, column=0, pady=5, sticky="ew")
 
         btn_buscar_pais = tk.Button(self.columna_izq, text="Mostrar país", command=lambda: self.opera("2"))
-        btn_buscar_pais.grid(row=3, column=0, pady=5, sticky="ew")
+        btn_buscar_pais.grid(row=4, column=0, pady=5, sticky="ew")
 
         self.mostrar_temperatura = tk.BooleanVar(value=True)
         self.mostrar_humedad = tk.BooleanVar(value=True)
         self.mostrar_viento = tk.BooleanVar(value=True)
 
         chk_temp = tk.Checkbutton(self.columna_izq, text="Temperatura", variable=self.mostrar_temperatura, command=self.actualizar_marcador_actual)
-        chk_temp.grid(row=4, column=0, pady=5, sticky="w")
+        chk_temp.grid(row=5, column=0, pady=2, sticky="w")
         chk_humedad = tk.Checkbutton(self.columna_izq, text="Humedad", variable=self.mostrar_humedad, command=self.actualizar_marcador_actual)
-        chk_humedad.grid(row=5, column=0, pady=5, sticky="w")
+        chk_humedad.grid(row=6, column=0, pady=2, sticky="w")
         chk_viento = tk.Checkbutton(self.columna_izq, text="Viento", variable=self.mostrar_viento, command=self.actualizar_marcador_actual)
-        chk_viento.grid(row=6, column=0, pady=5, sticky="w")
+        chk_viento.grid(row=7, column=0, pady=2, sticky="w")
 
         self.columna_izq.grid_columnconfigure(0, weight=1)
         self.frame_resultados = tk.Frame(self.columna_izq, bd=1, relief="solid")
-        self.frame_resultados.grid(row=7, column=0, pady=(8, 0), sticky="nsew")
+        self.frame_resultados.grid(row=8, column=0, pady=(8, 0), sticky="nsew")
         self.frame_resultados.grid_columnconfigure(0, weight=1)
         self.frame_resultados.grid_rowconfigure(0, weight=1)
 
@@ -115,10 +119,11 @@ class ViewMapa(ViewBase):
 
         self.canvas_resultados.grid(row=0, column=0, sticky="nsew")
         self.scroll_resultados.grid(row=0, column=1, sticky="ns")
-
+        
+        # COLUMNA DERECHA (MAPA)
         mapa = tk.Frame(self)
         mapa.grid(row=0, column=1, sticky="nsew")
-        self.mapa = TkinterMapView(mapa, width=600, height=500, corner_radius=0)
+        self.mapa = TkinterMapView(mapa, width=680, height=560, corner_radius=0)
         self.mapa.pack(fill="both", expand=True)
         self.mapa.set_position(40.4168, -3.7038)
         self.mapa.set_zoom(6)
@@ -300,6 +305,16 @@ class ViewMapa(ViewBase):
 
         self.mapa.set_position(lat_media, lon_media)
         self.mapa.set_zoom(5)
+    
+    def limpiar_al_cambiar_pantalla(self):
+        self.limpiar_marcadores
+        self.limpiar_lista_btn
+        self.entrada_ciudad.delete(0, tk.END)
+        self.mapa.set_position(40.4168, -3.7038)
+        self.mapa.set_zoom(6)
+        
+    def cambiar_a_pantalla_inicio(self):
+        self.btnCambiarPantallaInicio.emit()
 
 if __name__ == "__main__":
     from mediador_view import MediadorView
