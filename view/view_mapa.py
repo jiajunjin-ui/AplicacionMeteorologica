@@ -5,7 +5,7 @@ from model import Event
 import os
 from PIL import Image, ImageTk
 
-from view_base import ViewBase
+from view.view_base import ViewBase
 
 class ViewMapa(ViewBase):
     def __init__(self, parent, mediador_view):

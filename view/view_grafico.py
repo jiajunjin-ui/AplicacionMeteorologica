@@ -7,7 +7,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.dates as mdates
 
 from model import Event
-from view_base import ViewBase
+from view.view_base import ViewBase
 
 class ViewGrafico(ViewBase):
     """View de la representación gráfica de la evolución de las variables climáticas, predicciones a 3 días."""

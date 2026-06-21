@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import tkinter.messagebox
 
-from view_base import ViewBase
+from view.view_base import ViewBase
 from model import Event
 
 class ViewInicio(ViewBase):

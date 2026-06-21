@@ -8,7 +8,7 @@ import cartopy.feature as cfeature
 from cartopy.feature import ShapelyFeature
 
 from model import Event
-from view_base import ViewBase
+from view.view_base import ViewBase
 
 class ViewMapaVariables(ViewBase):
     def __init__(self, parent, mediador_view):
@@ -61,7 +61,7 @@ class ViewMapaVariables(ViewBase):
         # Elementos 
         self.label_instruccion = tk.Label(self.columna_izq, text="Introduzca País")
         self.entry_pais = tk.Entry(self.columna_izq, width=25)
-        btn_buscar_pais = ttk.Button(self.columna_izq, text="Mostrar país", command=lambda: self.actualizar_lista_paises())
+        btn_buscar_pais = ttk.Button(self.columna_izq, text="Mostrar país/región", command=lambda: self.actualizar_lista_paises())
         btn_ir_a_inicio = ttk.Button(self.columna_izq, width=10 , text="Inicio", command=lambda: self.cambiar_a_pantalla_inicio())
 
         # Organización

@@ -3,7 +3,7 @@ import tkinter.messagebox
 from tkinter import ttk
 
 from model import Event
-from view_base import ViewBase
+from view.view_base import ViewBase
 
 
 class ViewRanking(ViewBase):
