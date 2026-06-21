@@ -9,13 +9,14 @@ class PresenterGrafico:
         self.vista.btnSelect.clear_listeners()
         self.vista.check_selec.clear_listeners()
         self.vista.btnCambiarPantallaInicio.clear_listeners()
+        self.vista.btnCambiarPantallaRanking.clear_listeners()
 
         # Suscripción a las señales de la vista
         self.vista.btnBuscar.add_listener(self.f_actualizar_lista_ciudades)
         self.vista.btnSelect.add_listener(self.f_alamacenar_datos)
         self.vista.check_selec.add_listener(self.f_cambiar_seleccion_de_vars)
         self.vista.btnCambiarPantallaInicio.add_listener(self.f_cambiar_a_pantalla_inicio)
-
+        self.vista.btnCambiarPantallaRanking.add_listener(self.f_cambiar_a_pantalla_ranking)
 
     def f_actualizar_lista_ciudades(self):
         try:
@@ -61,6 +62,15 @@ class PresenterGrafico:
         try:
             self.vista.limpiar_grafico_cambio_pantalla()
             self.mediador.cambiar_presenter('PresenterInicio')
+            self.mediador.obtener_presenter_actual()
+        except Exception as e:
+            self.vista.mensaje('Error', str(e))
+    
+    def f_cambiar_a_pantalla_ranking(self):
+        """Cambia a la pantalla de Ranking"""
+        try:
+            self.vista.limpiar_grafico_cambio_pantalla()
+            self.mediador.cambiar_presenter('PresenterRanking')
             self.mediador.obtener_presenter_actual()
         except Exception as e:
             self.vista.mensaje('Error', str(e))

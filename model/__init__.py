@@ -8,6 +8,8 @@ Model's:
 - AppMeteo
 Métodos de Localidad ---agrupar en ---> AppMeteo
 Métodos de SolicitudOpenMeteo ---agrupar en---> AppMeteo
+Métodos de SistemaLocalizacio ---agrupar en ---> AppMeteo
+Métodos de SistemaPais ---agrupar en ---> AppMeteo
 
 - Event
 

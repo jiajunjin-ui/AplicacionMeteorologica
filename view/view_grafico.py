@@ -23,6 +23,7 @@ class ViewGrafico(ViewBase):
         self.btnSelect = Event()
         self.check_selec = Event()
         self.btnCambiarPantallaInicio = Event()
+        self.btnCambiarPantallaRanking = Event()
 
         # Lista de botones con las ciudades ###################
         self.lista_btn = []
@@ -42,7 +43,7 @@ class ViewGrafico(ViewBase):
         self.frame_interfaz_busqueda.grid(row=0, column=0, columnspan=5, pady=10, padx=10)
         self.frame_interfaz_busqueda.grid_propagate(False)
         self.frame_interfaz_busqueda.columnconfigure(1, weight=1)
-        self.frame_interfaz_busqueda.columnconfigure(5, weight=2)
+        self.frame_interfaz_busqueda.columnconfigure(5, weight=1)
 
       # Frame que contiene los CheckBtn[izq.] y el garfico[der.]
         self.frame_grafico = tk.Frame(self)
@@ -57,6 +58,7 @@ class ViewGrafico(ViewBase):
         self.entry_busca.focus_set()
         self.btn_busca = ttk.Button(self.frame_interfaz_busqueda, text="Buscar", command=lambda: self.actualizar_lista_ciudades())
         self.btn_cambiar_a_inicio = ttk.Button(self.frame_interfaz_busqueda, text="Inicio", command=lambda: self.cambiar_a_pantalla_inicio())
+        self.btn_cambiar_a_ranking = ttk.Button(self.frame_interfaz_busqueda, text="Ranking Ciudades", command=lambda: self.cambiar_a_pantalla_ranking())
 
         self.fig = Figure(figsize=(6, 3.5))
         self.ax = self.fig.add_subplot(111)
@@ -68,6 +70,7 @@ class ViewGrafico(ViewBase):
         self.entry_busca.grid(row=1, column=3, pady=5)
         self.btn_busca.grid(row=1, column=4, pady=5)
         self.btn_cambiar_a_inicio.grid(row=0, column=0, pady=2)
+        self.btn_cambiar_a_ranking.grid(row=0, column=6, pady=2)
 
       # Elementos y Oraganización ###########################
         nombre_vars = ["Temperatura", "Humedad Rel.", "Viento", "Prob. Precipitación"]
@@ -189,13 +192,16 @@ class ViewGrafico(ViewBase):
     def cambiar_a_pantalla_inicio(self):
         self.btnCambiarPantallaInicio.emit()
 
+    def cambiar_a_pantalla_ranking(self):
+        self.btnCambiarPantallaRanking.emit()
+
     def mensaje(self, prompt, txt):
         """Muestra error con messagebox"""
         tk.messagebox.showerror(prompt, txt)
 
 if __name__ == "__main__":
     from mediador_view import MediadorView
-
+    
     ventana = tk.Tk()
     mediador_view = MediadorView(ventana)
     mediador_view.cambiar_frame_view('ViewGrafico')

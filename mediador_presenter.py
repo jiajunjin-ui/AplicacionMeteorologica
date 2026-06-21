@@ -1,8 +1,9 @@
-from presenter.presenter_grafico import PresenterGrafico
-from presenter.presenter_mapa import PresenterMapa
-from presenter.presenter_ranking import PresenterRanking
-from presenter.presenter_inicio import PresenterInicio
-from presenter.presenter_mapa_variables import PresenterMapaVariables
+from presenter import PresenterInicio
+from presenter import PresenterGrafico
+from presenter import PresenterMapa
+from presenter import PresenterMapaVariables
+from presenter import PresenterRanking
+
 
 class MediadorPresenter:
     def __init__(self, mediador_view, model):
