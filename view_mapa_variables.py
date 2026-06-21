@@ -15,7 +15,7 @@ class ViewMapaVariables(ViewBase):
         super().__init__(
             parent, 
             mediador_view, 
-            titulo = "Mapa meteorológico continuos", 
+            titulo = "Mapa meteorológico elementos continuos", 
             size = '960x560')
         
         # Eventos: patrón Observer ############################
@@ -144,7 +144,7 @@ class ViewMapaVariables(ViewBase):
     def generar_mapa(self, lons_array, lats_array, 
                         lon_min, lon_max, 
                         lat_min, lat_max,
-                        nombre_pais, geometria_pais, 
+                        nombre_pais, geometria_pais, fecha,
                         resolucion):  
         
         self.limpiar_mapa()
@@ -187,7 +187,7 @@ class ViewMapaVariables(ViewBase):
         cuadricula.ylabel_style = {'size': 9}
 
         # Título y formato de ejes #######################################
-        self.ax.set_title(nombre_pais)
+        self.ax.set_title(f'{nombre_pais} {fecha}')
         self.ax.set_aspect('equal', adjustable='box')
 
         # Opciónes de mapa ###############################################

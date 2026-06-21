@@ -13,6 +13,7 @@ class ViewRanking(ViewBase):
         self.btnBuscarPais = Event()
         self.btnSelectPais = Event()
         self.btnGenerarRanking = Event()
+        self.btnCambiarPantallaInicio = Event()
         self.opciones_ranking = {
             "mas_calurosas": "Más calurosas",
             "mas_frias": "Más frías",
@@ -36,31 +37,34 @@ class ViewRanking(ViewBase):
         self.columna_izq = tk.Frame(self, padx=10, pady=10)
         self.columna_izq.grid(row=0, column=0, sticky="nsew")
 
-        tk.Label(self.columna_izq, text="Introduce un país:").grid(row=0, column=0, sticky="w")
+        self.btn_ir_a_inicio = tk.Button(self.columna_izq, width=10 , text="Inicio", command=lambda: self.cambiar_a_pantalla_inicio())
+        self.btn_ir_a_inicio.grid(row=0, column=0, sticky="w")
+
+        tk.Label(self.columna_izq, text="Introduce un país:").grid(row=1, column=0, sticky="w")
 
         self.entrada_pais = tk.Entry(self.columna_izq, width=25)
-        self.entrada_pais.grid(row=1, column=0, sticky="ew")
+        self.entrada_pais.grid(row=2, column=0, sticky="ew")
 
         self.btn_buscar_pais = tk.Button(
             self.columna_izq,
             text="Buscar país",
             command=self.actualizar_lista_paises
         )
-        self.btn_buscar_pais.grid(row=2, column=0, pady=5, sticky="ew")
+        self.btn_buscar_pais.grid(row=3, column=0, pady=5, sticky="ew")
 
         self.label_pais_seleccionado = tk.Label(
             self.columna_izq,
             text="País seleccionado: ninguno"
         )
-        self.label_pais_seleccionado.grid(row=3, column=0, sticky="w", pady=(10, 0))
+        self.label_pais_seleccionado.grid(row=4, column=0, sticky="w", pady=(10, 0))
 
-        tk.Label(self.columna_izq, text="Cantidad de ciudades:").grid(row=4, column=0, sticky="w", pady=(10, 0))
+        tk.Label(self.columna_izq, text="Cantidad de ciudades:").grid(row=5, column=0, sticky="w", pady=(10, 0))
 
         self.entry_cantidad = tk.Entry(self.columna_izq, width=25)
         self.entry_cantidad.insert(0, "10")
-        self.entry_cantidad.grid(row=5, column=0, sticky="ew", pady=5)
+        self.entry_cantidad.grid(row=6, column=0, sticky="ew", pady=5)
 
-        tk.Label(self.columna_izq, text="Tipo de ranking:").grid(row=6, column=0, sticky="w", pady=(10, 0))
+        tk.Label(self.columna_izq, text="Tipo de ranking:").grid(row=7, column=0, sticky="w", pady=(10, 0))
 
         self.combo_tipo = ttk.Combobox(
             self.columna_izq,
@@ -68,14 +72,14 @@ class ViewRanking(ViewBase):
             state="readonly"
         )
         self.combo_tipo.current(0)
-        self.combo_tipo.grid(row=7, column=0, sticky="ew", pady=5)
+        self.combo_tipo.grid(row=8, column=0, sticky="ew", pady=5)
 
         self.btn_generar = tk.Button(
             self.columna_izq,
             text="Generar ranking",
             command=self.generar_ranking
         )
-        self.btn_generar.grid(row=8, column=0, pady=5, sticky="ew")
+        self.btn_generar.grid(row=9, column=0, pady=5, sticky="ew")
 
         self.columna_izq.grid_columnconfigure(0, weight=1)
 
@@ -182,6 +186,16 @@ class ViewRanking(ViewBase):
                     fila["viento"]
                 )
             )
+    
+    def limpiar_al_cambiar_pantalla(self):
+        self.limpiar_ranking()
+        self.limpiar_lista_paises()
+        self.entrada_pais.delete(0, tk.END)
+        self.entry_cantidad.delete(0, tk.END)
+        self.entry_cantidad.insert(0, "10")
+
+    def cambiar_a_pantalla_inicio(self):
+        self.btnCambiarPantallaInicio.emit()
 
     def mensaje(self, prompt, txt):
         tk.messagebox.showerror(prompt, txt)

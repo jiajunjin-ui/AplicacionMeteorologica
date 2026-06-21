@@ -6,10 +6,18 @@ class PresenterRanking:
         self.modelo = model
         self.mediador = mediador_presenter
         self.pais_seleccionado = None
+        
+        # Limpiar listeners suscritos previamente
+        self.vista.btnBuscarPais.clear_listeners()
+        self.vista.btnSelectPais.clear_listeners()
+        self.vista.btnGenerarRanking.clear_listeners()
+        self.vista.btnCambiarPantallaInicio.clear_listeners()
 
+        # Suscripción a las señales de la vista
         self.vista.btnBuscarPais.add_listener(self.f_buscar_pais)
         self.vista.btnSelectPais.add_listener(self.f_seleccionar_pais)
         self.vista.btnGenerarRanking.add_listener(self.f_generar_ranking)
+        self.vista.btnCambiarPantallaInicio.add_listener(self.f_cambiar_a_pantalla_inicio)
 
     def f_buscar_pais(self):
         """
@@ -79,3 +87,12 @@ class PresenterRanking:
             filas.append(fila)
 
         return filas
+    
+    def f_cambiar_a_pantalla_inicio(self):
+        """Cambia a la pantalla de inicio"""
+        try:
+            self.vista.limpiar_al_cambiar_pantalla()
+            self.mediador.cambiar_presenter('PresenterInicio')
+            self.mediador.obtener_presenter_actual()
+        except Exception as e:
+            self.vista.mensaje('Error', str(e))

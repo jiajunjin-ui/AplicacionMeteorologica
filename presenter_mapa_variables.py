@@ -41,8 +41,9 @@ class PresenterMapaVariables:
              grid_z_temp, grid_z_hum, 
              grid_z_raf_viento,
              grid_z_velx_viento, grid_z_vely_viento,
-             nombre_pais, geometria_pais, 
+             nombre_pais, geometria_pais, fecha,
              resolucion) = datos
+            
             self.dic_datos = {
                 'lons_array': lons_array,
                 'lats_array': lats_array,
@@ -53,7 +54,7 @@ class PresenterMapaVariables:
                 'grid_z_temp': grid_z_temp, 'grid_z_hum': grid_z_hum, 
                 'grid_z_raf_viento': grid_z_raf_viento, 
                 'grid_z_velx_viento': grid_z_velx_viento, 'grid_z_vely_viento': grid_z_vely_viento,
-                'nombre_pais': nombre_pais, 'geometria_pais': geometria_pais, 
+                'nombre_pais': nombre_pais, 'geometria_pais': geometria_pais, 'fecha': fecha,
                 'resolucion': resolucion
             }
         except Exception as e:
@@ -75,6 +76,7 @@ class PresenterMapaVariables:
             
             geometria_pais = self.dic_datos['geometria_pais']
             nombre_pais = self.dic_datos['nombre_pais']
+            fecha = self.dic_datos['fecha']
 
             resolucion = self.dic_datos['resolucion']
 
@@ -86,7 +88,7 @@ class PresenterMapaVariables:
             self.vista.generar_mapa(lons_array, lats_array,
                                     lon_min, lon_max,
                                     lat_min, lat_max,
-                                    nombre_pais, geometria_pais,
+                                    nombre_pais, geometria_pais, fecha,
                                     resolucion
                                     )
         except Exception as e:
