@@ -15,7 +15,7 @@ class ViewMapaVariables(ViewBase):
         super().__init__(
             parent, 
             mediador_view, 
-            titulo = "Mapa meteorologico", 
+            titulo = "Mapa meteorológico continuos", 
             size = '960x560')
         
         # Eventos: patrón Observer ############################
@@ -70,7 +70,7 @@ class ViewMapaVariables(ViewBase):
         btn_buscar_pais.grid(row=3, column=0, pady=5, sticky="ew")
         btn_ir_a_inicio.grid(row=0, column=0, sticky="w")
 
-        # Elementos y Organización
+        # Elementos y Organización (Radiobutton)
         self.lista_variables= ['Temperatura', 'Humedad Relativa', 'Vientos']
         self.seleccion = tk.IntVar()
         for n, var in enumerate(self.lista_variables):
@@ -252,7 +252,7 @@ class ViewMapaVariables(ViewBase):
 
     # MÉTODOS DE LIMPIEZA DE MAPA ------------------------------------------------------
     def limpiar_mapa(self):
-        """Limpia el mapa"""
+        """Limpia todos los elementos gráficos del mapa, dejanbo un canvas en blanco"""
         self.fig.clear()
 
         self.ax = self.fig.add_subplot(111, projection=self.proyeccion)

@@ -52,8 +52,8 @@ class ViewGrafico(ViewBase):
         self.conten_checkbtn = tk.Frame(self.frame_grafico)
 
       # Elementos ###########################################
-        self.label_busca = ttk.Label(self.frame_interfaz_busqueda, text="Ciudad:")
-        self.entry_busca = ttk.Entry(self.frame_interfaz_busqueda, width=50)
+        self.label_busca = tk.Label(self.frame_interfaz_busqueda, text="Introduzca una Ciudad: ", font=("Arial", 9))
+        self.entry_busca = tk.Entry(self.frame_interfaz_busqueda, width=50, font=("Arial", 9))
         self.entry_busca.focus_set()
         self.btn_busca = ttk.Button(self.frame_interfaz_busqueda, text="Buscar", command=lambda: self.actualizar_lista_ciudades())
         self.btn_cambiar_a_inicio = ttk.Button(self.frame_interfaz_busqueda, text="Inicio", command=lambda: self.cambiar_a_pantalla_inicio())
