@@ -89,12 +89,6 @@ class SistemaPais:
                 else:
                     list_cod_vis_alta_resolucion.append(codigo_iso)
         return sorted(list(set(list_cod_vis_baja_resolucion) - set(list_cod_vis_alta_resolucion)))
-
-    def seleccionar_pais(self, nombre_pais):
-        """Devuelve el pais seleccionado de la lista generada."""
-        if nombre_pais not in self._paises_encontrados:
-            raise KeyError("Seleccione un pais de la lista generada.")
-        return self._paises_encontrados[nombre_pais]
     
 
     # Métodos especializados -----------------------------------
@@ -173,3 +167,12 @@ class SistemaPais:
             raise ValueError("Error al generar la geometria del país")
 
         return pais
+
+if __name__ == '__main__':
+    sistema_pais = SistemaPais()
+    print(sistema_pais.normalizar_texto('6Uuuu9OI/'))
+    lista_paises = sistema_pais.buscador_nombre_pais('Ale')
+    print(lista_paises)
+    print(sistema_pais.buscar_ciudades_principales(lista_paises[0], 5).localidades)
+    print(sistema_pais.cargar_fronteras_pais(lista_paises[0]).fronteras)
+
