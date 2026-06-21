@@ -15,7 +15,7 @@ class ViewMapaVariables(ViewBase):
         super().__init__(
             parent, 
             mediador_view, 
-            titulo = "Mapa meteorológico elementos continuos", 
+            titulo = "MAPA METEOROLÓGICO DE ELEMENTOS CONTINUOS", 
             size = '960x560')
         
         # Eventos: patrón Observer ############################

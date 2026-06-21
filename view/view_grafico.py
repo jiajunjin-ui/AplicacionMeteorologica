@@ -15,7 +15,7 @@ class ViewGrafico(ViewBase):
         super().__init__(
             parent,
             mediador_view,
-            titulo = "Previsión por ciudad",
+            titulo = "PREVISIÓN POR CIUDAD",
             size = '800x500')
 
         # Eventos: patrón Observer ############################

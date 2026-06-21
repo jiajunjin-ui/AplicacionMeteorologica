@@ -10,7 +10,7 @@ class ViewInicio(ViewBase):
         super().__init__(
             parent, 
             mediador_view, 
-            titulo = "Aplicación Meteorológica",
+            titulo = "APLICACIÓN METEOROLÓGICA",
             size = '400x300')
         
         # Eventos: patrón Observer ###########################

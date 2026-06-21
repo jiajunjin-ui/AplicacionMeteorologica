@@ -12,7 +12,7 @@ class ViewMapa(ViewBase):
         super().__init__(
             parent,
             mediador_view,
-            titulo ="Mapa meteorológico elemtos discretos",
+            titulo ="MAPA METEOLÓGICO DE ELEMENTOS DISCRETOS",
             size = '960x560'
         )
 

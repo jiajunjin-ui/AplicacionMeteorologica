@@ -24,7 +24,7 @@ class ViewRanking(ViewBase):
         super().__init__(
             parent,
             mediador_view,
-            titulo="Ranking",
+            titulo="RANKING",
             size="960x560")
 
     def setup_ui(self):

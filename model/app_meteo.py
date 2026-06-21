@@ -8,6 +8,7 @@ from scipy.interpolate import RegularGridInterpolator
 from pyproj import Transformer
 
 class AppMeteo:
+    """Clase que hace de fachada, agrupando todas las clases asociadas a la lógica de negocio."""
     def __init__(self):
         self.buscador = SistemaLocalizacion()
         self.buscador_paises = SistemaPais()
