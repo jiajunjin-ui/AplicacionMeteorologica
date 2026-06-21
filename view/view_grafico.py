@@ -31,7 +31,7 @@ class ViewGrafico(ViewBase):
         self.setup_ui()
     
     def setup_ui(self):
-        """ Configuración de Widgets """
+        """Configuración de Widgets"""
       # Frame para agrupar el frame de la interfaz de búsqueda[arriba] y la lista de botones[abajo]
         self.frame = tk.Frame(self)
         self.frame.grid(row=0, column=0, sticky="nsew")
@@ -159,7 +159,6 @@ class ViewGrafico(ViewBase):
 
             # Quitar margenes y juste de limites de X & Y ###
             self.ax.set_xlim(left=min(date), right=max(date))
-            self.ax.set_ylim(bottom=0)
             self.ax.margins(x=0)
             
             # Leyenda #######################################
